@@ -1,29 +1,12 @@
 { config, pkgs, lib, zen-browser, ... }:
 {
+  imports = [ ./shell.nix ];
+
   home.username = "danielh";
   home.homeDirectory = "/home/danielh";
   home.stateVersion = "25.05";
 
   programs.home-manager.enable = true;
-
-  # --- Shell: native HM (replaces zinit) ---
-  programs.zsh = {
-    enable = true;
-    autosuggestion.enable = true;
-    syntaxHighlighting.enable = true;
-    enableCompletion = true;
-    history.size = 50000;
-  };
-
-  programs.starship = {
-    enable = true;
-    enableZshIntegration = true;
-  };
-
-  programs.atuin = {
-    enable = true;
-    enableZshIntegration = true;
-  };
 
   # --- Terminal (Nord colors) ---
   programs.ghostty = {
@@ -44,15 +27,6 @@
       ];
     };
   };
-
-  # --- Multiplexer / VCS ---
-  programs.tmux.enable = true;
-  programs.git = {
-    enable = true;
-    userName = "danielh";
-    userEmail = "danielhoj@pm.me";
-  };
-  programs.lazygit.enable = true;
 
   # --- Wayland desktop companions ---
   programs.fuzzel.enable = true;
