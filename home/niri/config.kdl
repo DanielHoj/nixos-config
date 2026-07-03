@@ -2,7 +2,7 @@
 input {
     keyboard {
         xkb {
-            layout "dk"
+            layout "us"
         }
     }
     touchpad {
