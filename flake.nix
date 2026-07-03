@@ -44,6 +44,9 @@
           {
             home-manager.useGlobalPkgs = true;
             home-manager.useUserPackages = true;
+            # Back up (don't clobber) any pre-existing unmanaged dotfile HM
+            # wants to take over, e.g. atuin's runtime-created config.toml.
+            home-manager.backupFileExtension = "backup";
             home-manager.extraSpecialArgs = { inherit zen-browser; };
             home-manager.users.danielh = import ./home/danielh.nix;
           }
