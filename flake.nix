@@ -11,9 +11,14 @@
     };
 
     niri-flake.url = "github:sodiboo/niri-flake";
+
+    zen-browser = {
+      url = "github:0xc000022070/zen-browser-flake";
+      inputs.nixpkgs.follows = "nixpkgs-unstable";
+    };
   };
 
-  outputs = { self, nixpkgs, nixpkgs-unstable, home-manager, niri-flake, ... }:
+  outputs = { self, nixpkgs, nixpkgs-unstable, home-manager, niri-flake, zen-browser, ... }:
     let
       system = "x86_64-linux";
 
@@ -39,6 +44,7 @@
           {
             home-manager.useGlobalPkgs = true;
             home-manager.useUserPackages = true;
+            home-manager.extraSpecialArgs = { inherit zen-browser; };
             home-manager.users.danielh = import ./home/danielh.nix;
           }
         ];

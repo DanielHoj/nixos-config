@@ -46,6 +46,7 @@
     nerd-fonts.jetbrains-mono
     noto-fonts
     noto-fonts-emoji
+    cantarell-fonts
   ];
 
   # --- Wayland-friendly env ---
