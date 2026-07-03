@@ -54,8 +54,12 @@ cp /mnt/etc/nixos/hardware-configuration.nix \
 echo ">>> Staging files so the flake sees the new hardware config"
 nix-shell -p git --run "git -C /mnt/etc/nixos-config add -A"
 
-echo ">>> Installing NixOS (first build fetches niri nightly + all packages; be patient)"
-nixos-install --flake "/mnt/etc/nixos-config#${FLAKE_HOST}" --no-root-passwd
+echo ">>> Installing NixOS (fetches niri nightly from niri.cachix.org + all packages; be patient)"
+# The installer env doesn't know about niri's cache (that config only applies to
+# the *installed* system), so pass it here to avoid a from-source niri compile.
+nixos-install --flake "/mnt/etc/nixos-config#${FLAKE_HOST}" --no-root-passwd \
+  --option extra-substituters "https://niri.cachix.org" \
+  --option extra-trusted-public-keys "niri.cachix.org-1:Wv0OmO7PsuocRKzfDoJ3mulSl7Z6oezYhGhR+3W2964="
 
 echo
 echo ">>> DONE. User 'danielh' initial password is 'nixos' (change it after first login)."
