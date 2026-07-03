@@ -25,10 +25,6 @@ spawn-at-startup "mako"
 
 prefer-no-csd
 
-environment {
-    DISPLAY ":0"
-}
-
 binds {
     // Apps
     Mod+Return { spawn "ghostty"; }
