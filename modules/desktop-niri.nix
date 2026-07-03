@@ -1,8 +1,12 @@
-{ config, pkgs, lib, ... }:
+{ config, pkgs, lib, niri-flake, ... }:
 {
-  # --- niri (nightly, from niri-flake overlay) ---
+  # --- niri (nightly) ---
+  # Use niri-flake's `packages` output (built against niri-flake's own nixpkgs),
+  # NOT `pkgs.niri-unstable` from the overlay (built against our nixpkgs). Only
+  # the former matches what niri-flake's CI pushes to niri.cachix.org, so this is
+  # what makes the binary cache actually hit instead of compiling from source.
   programs.niri.enable = true;
-  programs.niri.package = pkgs.niri-unstable;
+  programs.niri.package = niri-flake.packages.${pkgs.system}.niri-unstable;
 
   # niri-flake binary cache so nightly niri is fetched, not built.
   niri-flake.cache.enable = true;
