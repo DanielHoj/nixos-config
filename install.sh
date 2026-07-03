@@ -16,6 +16,10 @@ lsblk "$DISK"
 echo ">>> This will ERASE $DISK. Continuing in 5s (Ctrl-C to abort)..."
 sleep 5
 
+echo ">>> Cleaning up any previous run (unmount/swapoff if present)"
+swapoff -a 2>/dev/null || true
+umount -R /mnt 2>/dev/null || true
+
 echo ">>> Partitioning (UEFI GPT: 512MiB ESP + rest root)"
 parted --script "$DISK" -- mklabel gpt
 parted --script "$DISK" -- mkpart ESP fat32 1MiB 513MiB
@@ -44,6 +48,11 @@ nix-shell -p git --run "git clone --depth 1 $REPO /mnt/etc/nixos-config"
 echo ">>> Injecting generated hardware config into the flake host"
 cp /mnt/etc/nixos/hardware-configuration.nix \
    "/mnt/etc/nixos-config/hosts/${FLAKE_HOST}/hardware-configuration.nix"
+
+# Flakes only see git-tracked files: stage the generated hardware config so
+# `nixos-install --flake` can find it (otherwise: "path ... does not exist").
+echo ">>> Staging files so the flake sees the new hardware config"
+nix-shell -p git --run "git -C /mnt/etc/nixos-config add -A"
 
 echo ">>> Installing NixOS (first build fetches niri nightly + all packages; be patient)"
 nixos-install --flake "/mnt/etc/nixos-config#${FLAKE_HOST}" --no-root-passwd
