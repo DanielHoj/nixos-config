@@ -14,6 +14,7 @@ in
   # Stylix targets we manage ourselves:
   stylix.targets.neovim.enable = false;  # nvim has its own colorscheme (colorschema.lua)
   stylix.targets.waybar.enable = false;  # custom waybar layout below (colors from Stylix palette)
+  stylix.targets.niri.enable = false;    # keep our editable config.kdl (niri-flake would else generate it)
 
   # --- Terminal (colors/fonts/opacity from Stylix) ---
   programs.ghostty.enable = true;
