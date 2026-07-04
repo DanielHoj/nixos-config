@@ -119,6 +119,12 @@ in
         Mod+B      { spawn "zen-beta"; }
         Mod+Q      { close-window; }
 
+        // Utilities
+        Mod+V       { spawn "clipboard-menu"; }
+        Mod+Shift+P { spawn "power-menu"; }
+        Mod+Ctrl+L  { spawn "swaylock" "-f"; }
+        Mod+Shift+N { spawn "swaync-client" "-t" "-sw"; }
+
         // Focus
         Mod+Left  { focus-column-left; }
         Mod+Right { focus-column-right; }
@@ -161,18 +167,19 @@ in
         // Overview
         Mod+Tab { toggle-overview; }
 
-        // Screenshots
-        Print       { screenshot; }
-        Ctrl+Print  { screenshot-screen; }
-        Alt+Print   { screenshot-window; }
+        // Screenshots (fuzzel menu; Shift+Print = niri's built-in region tool)
+        Print       { spawn "screenshot-menu"; }
+        Shift+Print { screenshot; }
 
         // Session
         Mod+Shift+E { quit; }
 
-        // Volume
-        XF86AudioRaiseVolume { spawn "wpctl" "set-volume" "@DEFAULT_AUDIO_SINK@" "5%+"; }
-        XF86AudioLowerVolume { spawn "wpctl" "set-volume" "@DEFAULT_AUDIO_SINK@" "5%-"; }
-        XF86AudioMute        { spawn "wpctl" "set-mute" "@DEFAULT_AUDIO_SINK@" "toggle"; }
+        // Volume / brightness (OSD popups via swayosd)
+        XF86AudioRaiseVolume  { spawn "swayosd-client" "--output-volume" "raise"; }
+        XF86AudioLowerVolume  { spawn "swayosd-client" "--output-volume" "lower"; }
+        XF86AudioMute         { spawn "swayosd-client" "--output-volume" "mute-toggle"; }
+        XF86MonBrightnessUp   { spawn "swayosd-client" "--brightness" "raise"; }
+        XF86MonBrightnessDown { spawn "swayosd-client" "--brightness" "lower"; }
     }
   '';
 }

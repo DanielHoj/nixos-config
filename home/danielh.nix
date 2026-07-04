@@ -3,7 +3,7 @@ let
   c = config.lib.stylix.colors.withHashtag;
 in
 {
-  imports = [ ./shell.nix ./nvim-tools.nix ./tmux.nix ./niri.nix ];
+  imports = [ ./shell.nix ./nvim-tools.nix ./tmux.nix ./niri.nix ./desktop.nix ];
 
   home.username = "danielh";
   home.homeDirectory = "/home/danielh";
@@ -14,14 +14,13 @@ in
   # Stylix targets we manage ourselves:
   stylix.targets.neovim.enable = false;  # nvim has its own colorscheme (colorschema.lua)
   stylix.targets.waybar.enable = false;  # custom waybar layout below (colors from Stylix palette)
-  stylix.targets.niri.enable = false;    # keep our editable config.kdl (niri-flake would else generate it)
+  stylix.targets.niri.enable = false;    # niri config in ./niri.nix (niri-flake would else generate it)
 
   # --- Terminal (colors/fonts/opacity from Stylix) ---
   programs.ghostty.enable = true;
 
-  # --- Wayland desktop companions (mako/fuzzel themed by Stylix) ---
+  # --- Launcher (fuzzel; notifications via swaync in ./desktop.nix) ---
   programs.fuzzel.enable = true;
-  services.mako.enable = true;
 
   programs.waybar = {
     enable = true;
