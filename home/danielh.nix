@@ -3,7 +3,7 @@ let
   c = config.lib.stylix.colors.withHashtag;
 in
 {
-  imports = [ ./shell.nix ./nvim-tools.nix ./tmux.nix ];
+  imports = [ ./shell.nix ./nvim-tools.nix ./tmux.nix ./niri.nix ];
 
   home.username = "danielh";
   home.homeDirectory = "/home/danielh";
@@ -87,8 +87,7 @@ in
     '';
   };
 
-  # --- niri config: plain KDL, live-editable (no rebuild to tweak) ---
-  xdg.configFile."niri/config.kdl".source = ./niri/config.kdl;
+  # niri config is in ./niri.nix (colors follow Stylix).
 
   # --- Wallpaper (referenced by swaybg in niri config) ---
   home.file.".local/share/wallpaper.png".source = ./wallpapers/nord.png;
