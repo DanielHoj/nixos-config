@@ -34,7 +34,9 @@
   services.openssh.enable = true;
 
   # --- Bootstrap tools at system level ---
-  environment.systemPackages = with pkgs; [ git neovim ];
+  # neovim from unstable: the nvim config targets 0.11+ APIs (vim.lsp.enable,
+  # lsp/*.lua) and modern diffopt (inline:char) the stale stable pin lacks.
+  environment.systemPackages = with pkgs; [ git unstable.neovim ];
 
   # First install target; do not change casually.
   system.stateVersion = "25.05";
