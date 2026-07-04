@@ -36,7 +36,7 @@
     gcc
     gnumake
     tree-sitter
-    nodejs_22
+    # nodejs comes from shell.nix (stable); don't add unstable's too (corepack collision)
     cargo
     rustc
     ripgrep
