@@ -27,11 +27,17 @@
     shell = pkgs.zsh;
     # CHANGE this after first login with `passwd`.
     initialPassword = "nixos";
+    # Host SSH key so the host can drive the VM over the port-forward.
+    openssh.authorizedKeys.keys = [
+      "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAINgxQ+TL2YRSEjor/6mXuOv6Sq57ncBjZQBjD+JXYm8t danielhoj1990@gmail.com"
+    ];
   };
   programs.zsh.enable = true;
 
-  # --- SSH (convenient for pasting/config transfer during eval) ---
+  # --- SSH (host drives the VM via `ssh -p 2222 danielh@localhost`) ---
   services.openssh.enable = true;
+  # Eval VM: let wheel run sudo without a password (so remote nixos-rebuild works).
+  security.sudo.wheelNeedsPassword = false;
 
   # --- Bootstrap tools at system level ---
   # neovim from unstable: the nvim config targets 0.11+ APIs (vim.lsp.enable,
