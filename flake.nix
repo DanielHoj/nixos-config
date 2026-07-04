@@ -26,7 +26,11 @@
       unstableOverlay = final: prev: {
         unstable = import nixpkgs-unstable {
           inherit (prev) system;
-          config.allowUnfree = true;
+          config = {
+            allowUnfree = true;
+            # A node-based LSP tool depends on this pnpm; the eval VM can accept it.
+            permittedInsecurePackages = [ "pnpm-10.34.0" ];
+          };
         };
       };
     in
