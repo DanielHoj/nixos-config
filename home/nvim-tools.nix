@@ -20,7 +20,8 @@
     lua-language-server
     typescript-language-server
     vue-language-server
-    sql-language-server
+    # NOTE: sqlls (joe-re sql-language-server) isn't in nixpkgs; guarded off in
+    # nvim init.lua on NixOS. Add `sqls` (Go) or package it if SQL LSP is needed.
 
     # --- Formatters / linters (conform, nvim-lint) ---
     prettier
