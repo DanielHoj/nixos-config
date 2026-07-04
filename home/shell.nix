@@ -81,6 +81,16 @@
         eval "$(thefuck --alias)"
         fuck "$@"
       }
+
+      # vi-mode yanks (y{motion}, yy, Y) also go to the Wayland clipboard
+      if command -v wl-copy &>/dev/null; then
+        vi-yank-clip() { zle vi-yank; printf '%s' "$CUTBUFFER" | wl-copy; }
+        vi-yank-eol-clip() { zle vi-yank-eol; printf '%s' "$CUTBUFFER" | wl-copy; }
+        zle -N vi-yank-clip
+        zle -N vi-yank-eol-clip
+        bindkey -M vicmd 'y' vi-yank-clip
+        bindkey -M vicmd 'Y' vi-yank-eol-clip
+      fi
     '';
   };
 
