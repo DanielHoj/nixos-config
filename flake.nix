@@ -39,6 +39,7 @@
           niri-flake.nixosModules.niri
           ./hosts/nixos-vm/configuration.nix
           ./modules/desktop-niri.nix
+          ./modules/keyd.nix
 
           home-manager.nixosModules.home-manager
           {
