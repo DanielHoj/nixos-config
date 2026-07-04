@@ -3,7 +3,7 @@ let
   c = config.lib.stylix.colors.withHashtag;
 in
 {
-  imports = [ ./shell.nix ./nvim-tools.nix ./niri.nix ./tmux.nix ];
+  imports = [ ./shell.nix ./nvim-tools.nix ./tmux.nix ];
 
   home.username = "danielh";
   home.homeDirectory = "/home/danielh";
@@ -85,6 +85,9 @@ in
       #pulseaudio.muted { color: ${c.base03}; }
     '';
   };
+
+  # --- niri config: plain KDL, live-editable (no rebuild to tweak) ---
+  xdg.configFile."niri/config.kdl".source = ./niri/config.kdl;
 
   # --- Wallpaper (referenced by swaybg in niri config) ---
   home.file.".local/share/wallpaper.png".source = ./wallpapers/nord.png;
