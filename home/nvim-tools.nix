@@ -8,7 +8,9 @@
   xdg.configFile."nvim".source =
     config.lib.file.mkOutOfStoreSymlink "${config.home.homeDirectory}/dotfiles/nvim/.config/nvim";
 
-  home.packages = with pkgs; [
+  # Pulled from the unstable overlay: current LSP/tool versions, and our
+  # stable pin (nixos-25.05 @ Jan 2026) is too old to have some of these.
+  home.packages = with pkgs.unstable; [
     # --- LSP servers (from init.lua's vim.lsp.enable list) ---
     basedpyright
     ruff
