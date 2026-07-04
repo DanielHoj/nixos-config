@@ -13,6 +13,8 @@
 
   # --- Wayland session prerequisites ---
   security.polkit.enable = true;
+  # swaylock needs a PAM service to verify the password (else it hangs on "validating").
+  security.pam.services.swaylock = { };
   services.dbus.enable = true;
   xdg.portal = {
     enable = true;
