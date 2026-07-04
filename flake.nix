@@ -16,9 +16,14 @@
       url = "github:0xc000022070/zen-browser-flake";
       inputs.nixpkgs.follows = "nixpkgs-unstable";
     };
+
+    stylix = {
+      url = "github:nix-community/stylix/release-25.05";
+      inputs.nixpkgs.follows = "nixpkgs";
+    };
   };
 
-  outputs = { self, nixpkgs, nixpkgs-unstable, home-manager, niri-flake, zen-browser, ... }:
+  outputs = { self, nixpkgs, nixpkgs-unstable, home-manager, niri-flake, zen-browser, stylix, ... }:
     let
       system = "x86_64-linux";
 
@@ -41,9 +46,11 @@
         modules = [
           { nixpkgs.overlays = [ unstableOverlay niri-flake.overlays.niri ]; }
           niri-flake.nixosModules.niri
+          stylix.nixosModules.stylix
           ./hosts/nixos-vm/configuration.nix
           ./modules/desktop-niri.nix
           ./modules/keyd.nix
+          ./modules/stylix.nix
 
           home-manager.nixosModules.home-manager
           {

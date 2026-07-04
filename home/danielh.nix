@@ -1,6 +1,9 @@
 { config, pkgs, lib, zen-browser, ... }:
+let
+  c = config.lib.stylix.colors.withHashtag;
+in
 {
-  imports = [ ./shell.nix ./nvim-tools.nix ];
+  imports = [ ./shell.nix ./nvim-tools.nix ./niri.nix ./tmux.nix ];
 
   home.username = "danielh";
   home.homeDirectory = "/home/danielh";
@@ -8,28 +11,17 @@
 
   programs.home-manager.enable = true;
 
-  # --- Terminal (Nord colors) ---
-  programs.ghostty = {
-    enable = true;
-    settings = {
-      font-family = "JetBrainsMono Nerd Font";
-      font-size = 11;
-      background = "#2e3440";
-      foreground = "#d8dee9";
-      cursor-color = "#88c0d0";
-      selection-background = "#434c5e";
-      background-opacity = 0.97;
-      palette = [
-        "0=#3b4252" "1=#bf616a" "2=#a3be8c" "3=#ebcb8b"
-        "4=#81a1c1" "5=#b48ead" "6=#88c0d0" "7=#e5e9f0"
-        "8=#4c566a" "9=#bf616a" "10=#a3be8c" "11=#ebcb8b"
-        "12=#81a1c1" "13=#b48ead" "14=#8fbcbb" "15=#eceff4"
-      ];
-    };
-  };
+  # Stylix targets we manage ourselves:
+  stylix.targets.neovim.enable = false;  # nvim has its own colorscheme (colorschema.lua)
+  stylix.targets.waybar.enable = false;  # custom waybar layout below (colors from Stylix palette)
 
-  # --- Wayland desktop companions ---
+  # --- Terminal (colors/fonts/opacity from Stylix) ---
+  programs.ghostty.enable = true;
+
+  # --- Wayland desktop companions (mako/fuzzel themed by Stylix) ---
   programs.fuzzel.enable = true;
+  services.mako.enable = true;
+
   programs.waybar = {
     enable = true;
     settings.mainBar = {
@@ -64,81 +56,38 @@
       }
       window#waybar {
         background: transparent;
-        color: #d8dee9;
+        color: ${c.base04};
       }
       .modules-left, .modules-center, .modules-right {
-        background: #2e3440;
+        background: ${c.base00};
         border-radius: 10px;
         padding: 0 6px;
       }
       #workspaces button {
-        color: #4c566a;
+        color: ${c.base03};
         padding: 0 6px;
       }
       #workspaces button.active {
-        color: #88c0d0;
+        color: ${c.base0C};
       }
       #workspaces button.urgent {
-        color: #bf616a;
+        color: ${c.base08};
       }
-      #window { color: #81a1c1; padding: 0 8px; }
-      #clock { color: #eceff4; font-weight: bold; padding: 0 10px; }
+      #window { color: ${c.base0D}; padding: 0 8px; }
+      #clock { color: ${c.base06}; font-weight: bold; padding: 0 10px; }
       #cpu, #memory, #network, #pulseaudio, #tray {
         padding: 0 8px;
       }
-      #cpu { color: #a3be8c; }
-      #memory { color: #ebcb8b; }
-      #network { color: #81a1c1; }
-      #pulseaudio { color: #b48ead; }
-      #pulseaudio.muted { color: #4c566a; }
+      #cpu { color: ${c.base0B}; }
+      #memory { color: ${c.base0A}; }
+      #network { color: ${c.base0D}; }
+      #pulseaudio { color: ${c.base0E}; }
+      #pulseaudio.muted { color: ${c.base03}; }
     '';
   };
 
-  services.mako = {
-    enable = true;
-    settings = {
-      background-color = "#2e3440";
-      text-color = "#d8dee9";
-      border-color = "#88c0d0";
-      border-size = 2;
-      border-radius = 10;
-      padding = "10";
-      margin = "10";
-      default-timeout = 5000;
-      font = "JetBrainsMono Nerd Font 10";
-    };
-  };
-
-  # --- niri config: plain KDL file (hand-editable, no rebuild to tweak) ---
-  xdg.configFile."niri/config.kdl".source = ./niri/config.kdl;
-
   # --- Wallpaper (referenced by swaybg in niri config) ---
   home.file.".local/share/wallpaper.png".source = ./wallpapers/nord.png;
-
-  # --- GTK / cursor / UI font theming ---
-  gtk = {
-    enable = true;
-    theme = {
-      name = "Adwaita-dark";
-      package = pkgs.gnome-themes-extra;
-    };
-    iconTheme = {
-      name = "Adwaita";
-      package = pkgs.adwaita-icon-theme;
-    };
-    font = {
-      name = "Cantarell";
-      size = 11;
-      package = pkgs.cantarell-fonts;
-    };
-  };
-
-  home.pointerCursor = {
-    name = "Adwaita";
-    package = pkgs.adwaita-icon-theme;
-    size = 24;
-    gtk.enable = true;
-  };
 
   home.packages = with pkgs; [
     btop
