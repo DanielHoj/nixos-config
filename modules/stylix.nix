@@ -1,13 +1,13 @@
 { config, pkgs, lib, ... }:
 # Centralized theming. Change `base16Scheme` to re-theme the whole desktop
 # (ghostty, tmux, mako, fuzzel, GTK, waybar, niri) in one place, then rebuild.
-# Swap nord.yaml for e.g. catppuccin-mocha.yaml / gruvbox-dark-medium.yaml /
+# Swap nord.yaml for e.g. catppuccin-mocha.yaml / kanagawa.yaml /
 # tokyo-night-dark.yaml — see ${pkgs.base16-schemes}/share/themes/.
 {
   stylix = {
     enable = true;
     polarity = "dark";
-    base16Scheme = "${pkgs.base16-schemes}/share/themes/gruvbox-dark-medium.yaml";
+    base16Scheme = "${pkgs.base16-schemes}/share/themes/kanagawa.yaml";
     image = ../home/wallpapers/nord.png;
 
     cursor = {
