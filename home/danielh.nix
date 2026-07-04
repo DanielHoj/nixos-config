@@ -1,6 +1,6 @@
 { config, pkgs, lib, zen-browser, ... }:
 {
-  imports = [ ./shell.nix ];
+  imports = [ ./shell.nix ./nvim-tools.nix ];
 
   home.username = "danielh";
   home.homeDirectory = "/home/danielh";
