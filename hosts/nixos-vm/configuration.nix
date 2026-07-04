@@ -34,6 +34,10 @@
   };
   programs.zsh.enable = true;
 
+  # --- Bluetooth (for bare metal; inert in the VM with no adapter) ---
+  hardware.bluetooth.enable = true;
+  services.blueman.enable = true;
+
   # --- SSH (host drives the VM via `ssh -p 2222 danielh@localhost`) ---
   services.openssh.enable = true;
   # Eval VM: let wheel run sudo without a password (so remote nixos-rebuild works).

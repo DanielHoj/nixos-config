@@ -46,6 +46,8 @@
   # --- Fonts (Nerd Font for waybar/starship glyphs) ---
   fonts.packages = with pkgs; [
     nerd-fonts.jetbrains-mono
+    nerd-fonts.fira-code
+    inter                       # crisp UI sans
     noto-fonts
     noto-fonts-emoji
     cantarell-fonts

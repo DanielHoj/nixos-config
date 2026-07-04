@@ -122,6 +122,12 @@
     enableZshIntegration = true;
   };
 
+  # Per-project dev shells: `.envrc` with `use flake` auto-loads on cd.
+  programs.direnv = {
+    enable = true;
+    nix-direnv.enable = true;
+  };
+
   programs.eza.enable = true;
 
   programs.git = {

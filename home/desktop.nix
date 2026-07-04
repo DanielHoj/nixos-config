@@ -51,12 +51,12 @@ in
     };
   };
 
-  # --- Idle: lock after 5 min, suspend after 10, lock before sleep ---
+  # --- Idle: lock after 15 min, suspend after 30, lock before sleep ---
   services.swayidle = {
     enable = true;
     timeouts = [
-      { timeout = 300; command = "${pkgs.swaylock-effects}/bin/swaylock -f"; }
-      { timeout = 600; command = "systemctl suspend"; }
+      { timeout = 900; command = "${pkgs.swaylock-effects}/bin/swaylock -f"; }
+      { timeout = 1800; command = "systemctl suspend"; }
     ];
     events = [
       { event = "before-sleep"; command = "${pkgs.swaylock-effects}/bin/swaylock -f"; }

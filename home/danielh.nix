@@ -19,6 +19,9 @@ in
   # --- Terminal (colors/fonts/opacity from Stylix) ---
   programs.ghostty.enable = true;
 
+  # --- Media player (Stylix-themed) ---
+  programs.mpv.enable = true;
+
   # --- Launcher (fuzzel; notifications via swaync in ./desktop.nix) ---
   programs.fuzzel.enable = true;
 
@@ -96,6 +99,8 @@ in
     brightnessctl
     swaybg                    # wallpaper
     pavucontrol               # audio GUI (waybar click target)
+    easyeffects               # PipeWire EQ/effects
+    obsidian                  # notes (unfree)
     zen-browser.packages.${pkgs.system}.default
   ];
 }
