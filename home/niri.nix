@@ -93,9 +93,7 @@ in
         clip-to-geometry true
     }
 
-    window-rule {
-        open-maximized true
-    }
+    // New windows open at half width (niri default column = 0.5). Mod+F maximizes.
 
     window-rule {
         match app-id=r#"^org\.pulseaudio\.pavucontrol$"#
