@@ -6,6 +6,10 @@
     keyboards.default = {
       ids = [ "*" ];
       settings = {
+        main = {
+          # Caps Lock: tap = Escape, hold = Super (home-row niri Mod key).
+          capslock = "overload(meta, esc)";
+        };
         # Emacs-style navigation while Ctrl is held.
         control = {
           n = "down";

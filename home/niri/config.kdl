@@ -5,7 +5,8 @@ input {
     keyboard {
         xkb {
             layout "us"
-            options "caps:escape"
+            // Caps is handled by keyd (tap=Esc, hold=Super). Right Alt = Compose (æøå).
+            options "compose:ralt"
         }
         repeat-delay 300
         repeat-rate 33
