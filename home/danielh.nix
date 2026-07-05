@@ -124,7 +124,8 @@ in
     pavucontrol               # audio GUI (waybar click target)
     easyeffects               # PipeWire EQ/effects
     obsidian                  # notes (unfree)
-    proton-pass               # password manager (desktop app)
+    # proton-pass desktop app removed: Electron renderer glitches in the VM.
+    # Use the Zen extension + web app (pass.proton.me); revisit on bare metal.
     zen                       # Zen browser (+ extensions, defined above)
   ];
 }
