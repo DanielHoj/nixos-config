@@ -35,7 +35,11 @@ in
   stylix.targets.niri.enable = false;    # niri config in ./niri.nix (niri-flake would else generate it)
 
   # --- Terminal (colors/fonts/opacity from Stylix) ---
-  programs.ghostty.enable = true;
+  programs.ghostty = {
+    enable = true;
+    # Always drop into tmux (attach the "main" session, or create it).
+    settings.command = "tmux new-session -A -s main";
+  };
 
   # --- Media player (Stylix-themed) ---
   programs.mpv.enable = true;

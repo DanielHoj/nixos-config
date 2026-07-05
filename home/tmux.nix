@@ -73,11 +73,8 @@
       bind | split-window -h -c "#{pane_current_path}"
       bind - split-window -v -c "#{pane_current_path}"
 
-      # Pane navigation without prefix (Alt+hjkl)
-      bind -n M-h select-pane -L
-      bind -n M-j select-pane -D
-      bind -n M-k select-pane -U
-      bind -n M-l select-pane -R
+      # Pane navigation is Ctrl+hjkl via vim-tmux-navigator (integrates with nvim).
+      # (Alt+hjkl pane-nav removed by request.)
 
       # Window switching (Alt+number)
       bind -n M-1 select-window -t 1
