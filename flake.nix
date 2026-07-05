@@ -2,7 +2,10 @@
   description = "NixOS + niri configuration (VM eval, multi-host)";
 
   inputs = {
-    nixpkgs.url = "github:NixOS/nixpkgs/nixos-25.05";
+    # Pinned to the exact nixos-25.05 HEAD (the branch is frozen at this commit;
+    # the bare `nixos-25.05` ref intermittently mis-resolves to unstable via the
+    # nix git cache, so we lock the rev explicitly for reproducibility).
+    nixpkgs.url = "github:NixOS/nixpkgs/ac62194c3917d5f474c1a844b6fd6da2db95077d";
     nixpkgs-unstable.url = "github:NixOS/nixpkgs/nixos-unstable";
 
     home-manager = {
