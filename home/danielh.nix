@@ -1,27 +1,9 @@
-{ config, pkgs, lib, zen-browser, ... }:
+{ config, pkgs, lib, ... }:
 let
   c = config.lib.stylix.colors.withHashtag;
-
-  amo = slug: "https://addons.mozilla.org/firefox/downloads/latest/${slug}/latest.xpi";
-  forced = slug: { install_url = amo slug; installation_mode = "force_installed"; };
-
-  # Zen with declaratively force-installed extensions + sensible policy defaults.
-  zen = zen-browser.packages.${pkgs.system}.default.override {
-    extraPolicies = {
-      DisableTelemetry = true;
-      DisablePocket = true;
-      DontCheckDefaultBrowser = true;
-      ExtensionSettings = {
-        "uBlock0@raymondhill.net" = forced "ublock-origin";
-        "addon@darkreader.org" = forced "darkreader";
-        "{d7742d87-e61d-4b78-b8a1-b469842139fa}" = forced "vimium-ff";
-        "78272b6fa58f4a1abaac99321d503a20@proton.me" = forced "proton-pass";
-      };
-    };
-  };
 in
 {
-  imports = [ ./shell.nix ./dev.nix ./nvim-tools.nix ./tmux.nix ./niri.nix ./desktop.nix ];
+  imports = [ ./shell.nix ./dev.nix ./nvim-tools.nix ./tmux.nix ./niri.nix ./desktop.nix ./zen.nix ];
 
   home.username = "danielh";
   home.homeDirectory = "/home/danielh";
@@ -124,8 +106,6 @@ in
     pavucontrol               # audio GUI (waybar click target)
     easyeffects               # PipeWire EQ/effects
     obsidian                  # notes (unfree)
-    # proton-pass desktop app removed: Electron renderer glitches in the VM.
-    # Use the Zen extension + web app (pass.proton.me); revisit on bare metal.
-    zen                       # Zen browser (+ extensions, defined above)
+    # Zen browser is configured in ./zen.nix (HM module installs the package).
   ];
 }
