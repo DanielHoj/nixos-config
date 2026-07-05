@@ -75,12 +75,11 @@
         rm -f -- "$tmp"
       }
 
-      # lazy-load thefuck (eager init spawns Python and is slow)
-      fuck() {
-        unfunction fuck 2>/dev/null || true
-        eval "$(thefuck --alias)"
-        fuck "$@"
-      }
+      # command-correction: pay-respects (thefuck was removed from nixpkgs 26.05).
+      # Rust, fast enough to init eagerly; `--alias fuck` keeps the old muscle memory.
+      if command -v pay-respects &>/dev/null; then
+        eval "$(pay-respects zsh --alias fuck)"
+      fi
 
       # vi-mode clipboard integration: y* copies to, p/P pastes from wl-clipboard
       if command -v wl-copy &>/dev/null; then
@@ -148,7 +147,7 @@
   home.packages = with pkgs; [
     eza
     zoxide
-    thefuck
+    pay-respects   # thefuck replacement (thefuck removed in nixpkgs 26.05)
     fzf
     nodejs_22   # replaces the Arch nvm setup
     bun         # replaces ~/.bun

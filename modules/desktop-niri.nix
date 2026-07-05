@@ -51,7 +51,7 @@
     nerd-fonts.fira-code
     inter                       # crisp UI sans
     noto-fonts
-    noto-fonts-emoji
+    noto-fonts-color-emoji   # renamed from noto-fonts-emoji in nixpkgs 26.05
     cantarell-fonts
   ];
 

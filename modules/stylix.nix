@@ -31,7 +31,7 @@
       };
       emoji = {
         name = "Noto Color Emoji";
-        package = pkgs.noto-fonts-emoji;
+        package = pkgs.noto-fonts-color-emoji;   # renamed from noto-fonts-emoji in nixpkgs 26.05
       };
       sizes = {
         terminal = 11;
