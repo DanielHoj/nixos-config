@@ -6,14 +6,17 @@
     # the bare `nixos-25.05` ref intermittently mis-resolves to unstable via the
     # nix git cache, so we lock the rev explicitly for reproducibility).
     nixpkgs.url = "github:NixOS/nixpkgs/ac62194c3917d5f474c1a844b6fd6da2db95077d";
-    nixpkgs-unstable.url = "github:NixOS/nixpkgs/nixos-unstable";
+    # Pinned to an exact rev (cached; branch ref drifts + mis-resolves via nix git cache).
+    nixpkgs-unstable.url = "github:NixOS/nixpkgs/b5aa0fbd538984f6e3d201be0005b4463d8b09f8";
 
     home-manager = {
       url = "github:nix-community/home-manager/release-25.05";
       inputs.nixpkgs.follows = "nixpkgs";
     };
 
-    niri-flake.url = "github:sodiboo/niri-flake";
+    # Pinned to the install rev (its niri-unstable build is what niri.cachix.org
+    # has; bumping this rebuilds niri from source — do it deliberately).
+    niri-flake.url = "github:sodiboo/niri-flake/c11048188f434263cf5c207ddef453984d1e02ba";
 
     zen-browser = {
       url = "github:0xc000022070/zen-browser-flake";
