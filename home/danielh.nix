@@ -21,7 +21,7 @@ let
   };
 in
 {
-  imports = [ ./shell.nix ./nvim-tools.nix ./tmux.nix ./niri.nix ./desktop.nix ];
+  imports = [ ./shell.nix ./dev.nix ./nvim-tools.nix ./tmux.nix ./niri.nix ./desktop.nix ];
 
   home.username = "danielh";
   home.homeDirectory = "/home/danielh";

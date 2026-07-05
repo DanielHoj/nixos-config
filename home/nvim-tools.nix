@@ -1,47 +1,35 @@
 { config, pkgs, lib, ... }:
 # Idiomatic nvim port: the Lua config lives in the cloned ~/dotfiles (live-
-# editable via an out-of-store symlink), while all LSP/DAP/formatter binaries
-# and the plugin build toolchain come from Nix instead of Mason. A /etc/NIXOS
-# guard in the nvim config disables Mason on NixOS (see dotfiles nvim).
+# editable via an out-of-store symlink); the LSP servers, DAP adapters, and
+# tree-sitter come from Nix instead of Mason. A /etc/NIXOS guard in the nvim
+# config disables Mason on NixOS (see dotfiles nvim). General toolchains and
+# the dual-use CLI linters/formatters these servers shell out to (ruff,
+# prettier, golangci-lint, delve, gcc, node…) live in ./dev.nix and land on
+# the same PATH.
 {
   # nvim config from the cloned dotfiles repo (edits apply without a rebuild).
   xdg.configFile."nvim".source =
     config.lib.file.mkOutOfStoreSymlink "${config.home.homeDirectory}/dotfiles/nvim/.config/nvim";
 
-  # Pulled from the unstable overlay: current LSP/tool versions, and our
-  # stable pin (nixos-25.05 @ Jan 2026) is too old to have some of these.
+  # Editor plumbing only — kept on the unstable overlay because LSP servers and
+  # DAP adapters move fast and need to match neovim's current APIs.
   home.packages = with pkgs.unstable; [
     # --- LSP servers (from init.lua's vim.lsp.enable list) ---
     basedpyright
-    ruff
     gopls
-    golangci-lint
-    golangci-lint-langserver
+    golangci-lint-langserver   # wraps golangci-lint (CLI in ./dev.nix)
     lua-language-server
     typescript-language-server
     vue-language-server
     # NOTE: sqlls (joe-re sql-language-server) isn't in nixpkgs; guarded off in
     # nvim init.lua on NixOS. Add `sqls` (Go) or package it if SQL LSP is needed.
-
-    # --- Formatters / linters (conform, nvim-lint) ---
-    prettier
-    uv                 # nvim-lint's uv_mypy runs mypy via uv
+    # ruff also provides `ruff server` (LSP) — the binary lives in ./dev.nix.
 
     # --- DAP adapters ---
-    delve                                        # Go (dlv)
     vscode-js-debug                              # frontend JS/TS
     (python3.withPackages (ps: [ ps.debugpy ]))  # Python fallback adapter
 
-    # --- Plugin build toolchain (lazy.nvim, tree-sitter parsers) ---
-    gcc
-    gnumake
+    # --- tree-sitter CLI (builds nvim-treesitter parsers; needs gcc from ./dev.nix) ---
     tree-sitter
-    # nodejs comes from shell.nix (stable); don't add unstable's too (corepack collision)
-    cargo
-    rustc
-    ripgrep
-    fd
-    curl
-    unzip
   ];
 }

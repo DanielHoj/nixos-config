@@ -149,7 +149,6 @@
     zoxide
     pay-respects   # thefuck replacement (thefuck removed in nixpkgs 26.05)
     fzf
-    nodejs_22   # replaces the Arch nvm setup
-    bun         # replaces ~/.bun
+    # nodejs_22 + bun moved to ./dev.nix (language toolchains grouped there)
   ];
 }
