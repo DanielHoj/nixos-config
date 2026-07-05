@@ -9,6 +9,7 @@
     # --- Language toolchains ---
     cargo
     rustc
+    go                 # Go toolchain — gopls / delve / golangci-lint all need it at runtime
     uv                 # Python env/package manager
     gcc                # C compiler (also builds nvim's tree-sitter parsers / native plugins)
     gnumake
