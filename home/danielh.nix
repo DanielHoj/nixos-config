@@ -7,7 +7,7 @@ let
 
   # Zen with declaratively force-installed extensions + sensible policy defaults.
   zen = zen-browser.packages.${pkgs.system}.default.override {
-    policies = {
+    extraPolicies = {
       DisableTelemetry = true;
       DisablePocket = true;
       DontCheckDefaultBrowser = true;
