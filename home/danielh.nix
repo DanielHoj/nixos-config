@@ -1,6 +1,24 @@
 { config, pkgs, lib, zen-browser, ... }:
 let
   c = config.lib.stylix.colors.withHashtag;
+
+  amo = slug: "https://addons.mozilla.org/firefox/downloads/latest/${slug}/latest.xpi";
+  forced = slug: { install_url = amo slug; installation_mode = "force_installed"; };
+
+  # Zen with declaratively force-installed extensions + sensible policy defaults.
+  zen = zen-browser.packages.${pkgs.system}.default.override {
+    policies = {
+      DisableTelemetry = true;
+      DisablePocket = true;
+      DontCheckDefaultBrowser = true;
+      ExtensionSettings = {
+        "uBlock0@raymondhill.net" = forced "ublock-origin";
+        "addon@darkreader.org" = forced "darkreader";
+        "{d7742d87-e61d-4b78-b8a1-b469842139fa}" = forced "vimium-ff";
+        "78272b6fa58f4a1abaac99321d503a20@proton.me" = forced "proton-pass";
+      };
+    };
+  };
 in
 {
   imports = [ ./shell.nix ./nvim-tools.nix ./tmux.nix ./niri.nix ./desktop.nix ];
@@ -27,6 +45,7 @@ in
 
   programs.waybar = {
     enable = true;
+    systemd.enable = true;   # restarts on rebuild → no re-login for waybar/theme changes
     settings.mainBar = {
       layer = "top";
       position = "top";
@@ -101,6 +120,7 @@ in
     pavucontrol               # audio GUI (waybar click target)
     easyeffects               # PipeWire EQ/effects
     obsidian                  # notes (unfree)
-    zen-browser.packages.${pkgs.system}.default
+    proton-pass               # password manager (desktop app)
+    zen                       # Zen browser (+ extensions, defined above)
   ];
 }

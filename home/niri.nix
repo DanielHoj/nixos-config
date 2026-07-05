@@ -72,7 +72,8 @@ in
     }
 
     spawn-at-startup "swaybg" "--mode" "fill" "--image" "/home/danielh/.local/share/wallpaper.png"
-    spawn-at-startup "waybar"
+    // waybar runs as a systemd user service (programs.waybar.systemd.enable)
+    spawn-at-startup "blueman-applet"
 
     prefer-no-csd
 
