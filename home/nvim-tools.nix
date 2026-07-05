@@ -21,6 +21,8 @@
     lua-language-server
     typescript-language-server
     vue-language-server
+    rust-analyzer              # Rust LSP (runs clippy on save; needs cargo/clippy from ./dev.nix)
+    nixd                       # Nix LSP (flake/NixOS-options aware)
     # NOTE: sqlls (joe-re sql-language-server) isn't in nixpkgs; guarded off in
     # nvim init.lua on NixOS. Add `sqls` (Go) or package it if SQL LSP is needed.
     # ruff also provides `ruff server` (LSP) — the binary lives in ./dev.nix.
@@ -28,6 +30,12 @@
     # --- DAP adapters ---
     vscode-js-debug                              # frontend JS/TS
     (python3.withPackages (ps: [ ps.debugpy ]))  # Python fallback adapter
+    # Rust (and C/C++) debugging: put a `codelldb` on PATH so nvim-dap finds it
+    # via exepath(), matching how dlv/debugpy are resolved. The upstream package
+    # ships the adapter inside the vscode extension tree; wrap it as a bare cmd.
+    (writeShellScriptBin "codelldb" ''
+      exec ${vscode-extensions.vadimcn.vscode-lldb}/share/vscode/extensions/vadimcn.vscode-lldb/adapter/codelldb "$@"
+    '')
 
     # --- tree-sitter CLI (builds nvim-treesitter parsers; needs gcc from ./dev.nix) ---
     tree-sitter

@@ -21,6 +21,9 @@
     # calls them from PATH. Their LSP wrappers live in ./nvim-tools.nix.
     ruff               # Python linter/formatter
     prettier           # JS/TS/web formatter
+    rustfmt            # Rust formatter (conform `rust = rustfmt`)
+    clippy             # Rust linter (rust-analyzer's check-on-save)
+    nixfmt             # Nix formatter, official RFC style (conform `nix = nixfmt`)
     golangci-lint      # Go meta-linter (golangci-lint-langserver wraps this)
     delve              # Go debugger (dlv)
 
