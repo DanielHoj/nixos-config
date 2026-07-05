@@ -15,6 +15,8 @@
   security.polkit.enable = true;
   # swaylock needs a PAM service to verify the password (else it hangs on "validating").
   security.pam.services.swaylock = { };
+  # Secret Service (keyring) so apps like Proton Pass can store their session key.
+  services.gnome.gnome-keyring.enable = true;
   services.dbus.enable = true;
   xdg.portal = {
     enable = true;
