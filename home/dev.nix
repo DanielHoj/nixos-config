@@ -27,6 +27,11 @@
     golangci-lint      # Go meta-linter (golangci-lint-langserver wraps this)
     delve              # Go debugger (dlv)
 
+    # --- AI / sandboxing ---
+    unstable.claude-code       # Claude Code CLI (unfree; unstable = frequent releases)
+    unstable.pi-coding-agent   # `pi` coding agent (@earendil-works; unstable = fresh)
+    bubblewrap                 # bwrap unprivileged sandboxing
+
     # --- General CLI utilities ---
     ripgrep
     fd
