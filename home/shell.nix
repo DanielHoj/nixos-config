@@ -142,7 +142,12 @@
     EDITOR = "nvim";
     VISUAL = "nvim";
     NODE_OPTIONS = "--no-network-family-autoselection";
+    # Global npm installs land in a user-writable prefix so `npm i -g` works on
+    # NixOS (for tools not in nixpkgs, e.g. pi's ecosystem plugins: pi-vim,
+    # pi-subagents, pi-memory, pi-mcp-adapter, pi-observational-memory).
+    NPM_CONFIG_PREFIX = "${config.home.homeDirectory}/.npm-global";
   };
+  home.sessionPath = [ "${config.home.homeDirectory}/.npm-global/bin" ];
 
   home.packages = with pkgs; [
     eza
