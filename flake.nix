@@ -92,7 +92,10 @@
         # ThinkPad T14 Gen 2i — bare-metal migration target.
         thinkpad = mkHost [
           ./hosts/thinkpad/configuration.nix
-          nixos-hardware.nixosModules.lenovo-thinkpad-t14-intel
+          # nixos-hardware only exposes gen-specific T14 Intel modules as flake
+          # outputs; import the generic t14/intel dir directly (it pulls in the
+          # t14 base + common-cpu-intel + common-gpu-intel).
+          "${nixos-hardware}/lenovo/thinkpad/t14/intel"
           disko.nixosModules.disko
         ];
       };
