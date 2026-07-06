@@ -46,18 +46,46 @@ in
       margin-top = 6;
       margin-left = 8;
       margin-right = 8;
-      modules-left = [ "niri/workspaces" ];
+      modules-left = [ "niri/workspaces" "niri/window" ];
       modules-center = [ "clock" ];
-      modules-right = [ "battery" "network" "pulseaudio" "tray" ];
+      modules-right = [ "cpu" "memory" "battery" "network" "pulseaudio" "tray" ];
       clock.format = "{:%a %d %b  %H:%M}";
       clock.tooltip-format = "<tt><small>{calendar}</small></tt>";
-      network.format-wifi = " {essid}";
-      network.format-ethernet = " ";
-      network.format-disconnected = "󰤭 ";
+
+      # Focused window (app icon + title) — distinct from the tray.
+      "niri/window" = {
+        format = "{}";
+        icon = true;
+        icon-size = 16;
+        max-length = 50;
+        separate-outputs = true;
+      };
+
+      # CPU / memory
+      cpu.format = " {usage}%";
+      cpu.interval = 5;
+      memory.format = " {percentage}%";
+      memory.interval = 5;
+
+      # Network: wifi signal icons; click opens the GUI connection editor.
+      network.format-wifi = "{icon} {essid}";
+      network.format-ethernet = "󰈀 wired";
+      network.format-disconnected = "󰤭 off";
+      network.format-icons = [ "󰤯" "󰤟" "󰤢" "󰤥" "󰤨" ];
       network.tooltip-format = "{ifname}: {ipaddr}";
-      pulseaudio.format = " {volume}%";
-      pulseaudio.format-muted = "󰖁 ";
+      network.tooltip-format-wifi = "{essid}  {signalStrength}%\n{ipaddr}";
+      network.on-click = "nm-connection-editor";
+
+      # Sound: scroll to change volume, right-click to mute (via swayosd OSD).
+      pulseaudio.format = "{icon} {volume}%";
+      pulseaudio.format-bluetooth = "{icon}  {volume}%";
+      pulseaudio.format-muted = "󰖁 muted";
+      pulseaudio.format-icons = { headphone = " "; headset = " "; default = [ " " " " " " ]; };
       pulseaudio.on-click = "pavucontrol";
+      pulseaudio.on-click-right = "swayosd-client --output-volume mute-toggle";
+      pulseaudio.on-scroll-up = "swayosd-client --output-volume raise";
+      pulseaudio.on-scroll-down = "swayosd-client --output-volume lower";
+
       # battery: hidden on desktops/VMs with no battery; shows on the ThinkPad.
       battery.format = "{icon} {capacity}%";
       battery.format-charging = "󰂄 {capacity}%";
