@@ -30,6 +30,9 @@
   # --- Compressed RAM swap (matches the current machine; no disk swap) ---
   zramSwap.enable = true;
 
+  # --- External drives: mount NTFS + exFAT USB sticks / SD cards ---
+  boot.supportedFilesystems = [ "ntfs" "exfat" ];
+
   # --- User ---
   users.users.danielh = {
     isNormalUser = true;

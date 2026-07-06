@@ -11,6 +11,9 @@ in
 
   programs.home-manager.enable = true;
 
+  # Create ~/Downloads, ~/Documents, ~/Pictures, etc. on a fresh install.
+  xdg.userDirs.enable = true;
+
   # Stylix targets we manage ourselves:
   stylix.targets.neovim.enable = false;  # nvim has its own colorscheme (colorschema.lua)
   stylix.targets.waybar.enable = false;  # custom waybar layout below (colors from Stylix palette)
@@ -110,6 +113,7 @@ in
     easyeffects               # PipeWire EQ/effects
     obsidian                  # notes (unfree)
     imv                       # Wayland image viewer (replaces KDE gwenview)
+    networkmanagerapplet      # nm-applet + nm-connection-editor (GUI wifi)
     google-chrome             # secondary browser (unfree); Zen is primary (./zen.nix)
     # Zen browser is configured in ./zen.nix (HM module installs the package).
   ];

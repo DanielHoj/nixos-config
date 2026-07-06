@@ -49,6 +49,8 @@
     noto-fonts
     noto-fonts-color-emoji   # renamed from noto-fonts-emoji in nixpkgs 26.05
     cantarell-fonts
+    liberation_ttf              # Arial/Times/Courier-compatible metrics (docs/web)
+    dejavu_fonts
   ];
 
   # --- Wayland-friendly env ---

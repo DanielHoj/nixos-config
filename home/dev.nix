@@ -42,5 +42,14 @@
     jq                 # JSON wrangling
     gh                 # GitHub CLI
     tldr               # concise command examples
+    fastfetch          # system info
+    duf                # friendly disk-usage viewer
+    smartmontools      # SSD/HDD health (smartctl)
+    usbutils           # lsusb
+    unrar              # RAR extraction (unfree)
+    cmake              # build system (some projects / nvim plugins need it)
+    meld               # visual diff / merge (GUI)
+    aspell             # spell checker
+    aspellDicts.en     # English dictionary for aspell
   ];
 }
