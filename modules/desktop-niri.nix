@@ -41,10 +41,6 @@
     pulse.enable = true;
   };
 
-  # --- VM guest integration (clipboard + auto-resize) ---
-  services.qemuGuest.enable = true;
-  services.spice-vdagentd.enable = true;
-
   # --- Fonts (Nerd Font for waybar/starship glyphs) ---
   fonts.packages = with pkgs; [
     nerd-fonts.jetbrains-mono

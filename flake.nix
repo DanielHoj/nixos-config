@@ -26,9 +26,18 @@
       url = "github:nix-community/stylix/release-26.05";
       inputs.nixpkgs.follows = "nixpkgs";
     };
+
+    # Hardware quirk modules for the bare-metal ThinkPad.
+    nixos-hardware.url = "github:NixOS/nixos-hardware";
+
+    # Declarative disk partitioning for the bare-metal install.
+    disko = {
+      url = "github:nix-community/disko";
+      inputs.nixpkgs.follows = "nixpkgs";
+    };
   };
 
-  outputs = { self, nixpkgs, nixpkgs-unstable, home-manager, niri-flake, zen-browser, stylix, ... }:
+  outputs = { self, nixpkgs, nixpkgs-unstable, home-manager, niri-flake, zen-browser, stylix, nixos-hardware, disko, ... }:
     let
       system = "x86_64-linux";
 
@@ -38,35 +47,53 @@
           inherit (prev) system;
           config = {
             allowUnfree = true;
-            # A node-based LSP tool depends on this pnpm; the eval VM can accept it.
+            # A node-based LSP tool depends on this pnpm; we accept it.
             permittedInsecurePackages = [ "pnpm-10.34.0" ];
           };
         };
       };
-    in
-    {
-      nixosConfigurations.nixos-vm = nixpkgs.lib.nixosSystem {
+
+      # Modules every host shares: overlays, niri, Stylix theming, the common
+      # base system, the niri desktop, keyd, and Home Manager for danielh.
+      # Host-specific config (hardware, hostname, guest agents) is layered on
+      # per host in hosts/<host>/.
+      sharedModules = [
+        { nixpkgs.overlays = [ unstableOverlay niri-flake.overlays.niri ]; }
+        niri-flake.nixosModules.niri
+        stylix.nixosModules.stylix
+        ./modules/common.nix
+        ./modules/desktop-niri.nix
+        ./modules/keyd.nix
+        ./modules/stylix.nix
+
+        home-manager.nixosModules.home-manager
+        {
+          home-manager.useGlobalPkgs = true;
+          home-manager.useUserPackages = true;
+          # Back up (don't clobber) any pre-existing unmanaged dotfile HM
+          # wants to take over, e.g. atuin's runtime-created config.toml.
+          home-manager.backupFileExtension = "backup";
+          home-manager.extraSpecialArgs = { inherit zen-browser; };
+          home-manager.users.danielh = import ./home/danielh.nix;
+        }
+      ];
+
+      mkHost = hostModules: nixpkgs.lib.nixosSystem {
         inherit system;
         specialArgs = { inherit niri-flake; };
-        modules = [
-          { nixpkgs.overlays = [ unstableOverlay niri-flake.overlays.niri ]; }
-          niri-flake.nixosModules.niri
-          stylix.nixosModules.stylix
-          ./hosts/nixos-vm/configuration.nix
-          ./modules/desktop-niri.nix
-          ./modules/keyd.nix
-          ./modules/stylix.nix
+        modules = sharedModules ++ hostModules;
+      };
+    in
+    {
+      nixosConfigurations = {
+        # QEMU eval VM.
+        nixos-vm = mkHost [ ./hosts/nixos-vm/configuration.nix ];
 
-          home-manager.nixosModules.home-manager
-          {
-            home-manager.useGlobalPkgs = true;
-            home-manager.useUserPackages = true;
-            # Back up (don't clobber) any pre-existing unmanaged dotfile HM
-            # wants to take over, e.g. atuin's runtime-created config.toml.
-            home-manager.backupFileExtension = "backup";
-            home-manager.extraSpecialArgs = { inherit zen-browser; };
-            home-manager.users.danielh = import ./home/danielh.nix;
-          }
+        # ThinkPad T14 Gen 2i — bare-metal migration target.
+        thinkpad = mkHost [
+          ./hosts/thinkpad/configuration.nix
+          nixos-hardware.nixosModules.lenovo-thinkpad-t14-intel
+          disko.nixosModules.disko
         ];
       };
     };
