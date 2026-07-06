@@ -139,7 +139,9 @@ in
   # niri config is in ./niri.nix (colors follow Stylix).
 
   # --- Wallpaper (referenced by swaybg in niri config) ---
-  home.file.".local/share/wallpaper.png".source = ./wallpapers/nord.png;
+  # Hokusai's "Great Wave off Kanagawa" (public domain) — the namesake of the
+  # kanagawa theme. swaybg reads the bytes, so the .png target name is fine.
+  home.file.".local/share/wallpaper.png".source = ./wallpapers/kanagawa-wave.jpg;
 
   home.packages = with pkgs; [
     btop
