@@ -18,10 +18,17 @@
   # Secret Service (keyring) so apps like Proton Pass can store their session key.
   services.gnome.gnome-keyring.enable = true;
   services.dbus.enable = true;
+  # Portals: gtk for the file chooser/settings, gnome for screencast (so
+  # screen-sharing in Zoom/Meet/browsers works), gnome-keyring for the Secret
+  # portal. Routing Screencast to gtk (the old default) silently breaks it.
   xdg.portal = {
     enable = true;
-    extraPortals = [ pkgs.xdg-desktop-portal-gtk ];
-    config.common.default = "gtk";
+    extraPortals = [ pkgs.xdg-desktop-portal-gtk pkgs.xdg-desktop-portal-gnome ];
+    config.common = {
+      default = [ "gtk" ];
+      "org.freedesktop.impl.portal.Screencast" = [ "gnome" ];
+      "org.freedesktop.impl.portal.Secret" = [ "gnome-keyring" ];
+    };
   };
 
   # --- Login: greetd + tuigreet launching a niri session ---
@@ -51,6 +58,12 @@
     cantarell-fonts
     liberation_ttf              # Arial/Times/Courier-compatible metrics (docs/web)
     dejavu_fonts
+  ];
+
+  # X11 app support: niri (25.08+) natively spawns xwayland-satellite and
+  # exports $DISPLAY on demand — it just needs the binary on PATH.
+  environment.systemPackages = [
+    niri-flake.packages.${pkgs.system}.xwayland-satellite-unstable
   ];
 
   # --- Wayland-friendly env ---

@@ -50,6 +50,12 @@
   hardware.bluetooth.enable = true;
   services.blueman.enable = true;
 
+  # --- Desktop integration services ---
+  services.upower.enable = true;    # battery status (waybar) + power events
+  services.udisks2.enable = true;   # removable-drive mounting (backs udiskie)
+  services.gvfs.enable = true;      # trash, MTP (phones), network shares (yazi)
+  programs.nix-ld.enable = true;    # run foreign/FHS dynamic binaries (dev tooling)
+
   # --- SSH (key-only; the authorized key above is the sole way in) ---
   services.openssh.enable = true;
   services.openssh.settings.PasswordAuthentication = false;

@@ -74,6 +74,8 @@ in
     spawn-at-startup "swaybg" "--mode" "fill" "--image" "/home/danielh/.local/share/wallpaper.png"
     // waybar runs as a systemd user service (programs.waybar.systemd.enable)
     spawn-at-startup "blueman-applet"
+    // polkit authentication agent (GUI password prompts for mount/nm/fwupd)
+    spawn-at-startup "${pkgs.polkit_gnome}/libexec/polkit-gnome-authentication-agent-1"
 
     prefer-no-csd
 

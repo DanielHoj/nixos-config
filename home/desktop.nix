@@ -72,6 +72,14 @@ in
   # --- Clipboard history (wl-paste watchers) ---
   services.cliphist.enable = true;
 
+  # --- Auto-mount removable drives (USB/SD) with a tray icon ---
+  services.udiskie = {
+    enable = true;
+    automount = true;
+    notify = true;
+    tray = "auto";   # show tray icon only when a device is mounted
+  };
+
   # --- Night light (Copenhagen) ---
   services.wlsunset = {
     enable = true;

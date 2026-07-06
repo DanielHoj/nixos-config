@@ -48,7 +48,7 @@ in
       margin-right = 8;
       modules-left = [ "niri/workspaces" ];
       modules-center = [ "clock" ];
-      modules-right = [ "network" "pulseaudio" "tray" ];
+      modules-right = [ "battery" "network" "pulseaudio" "tray" ];
       clock.format = "{:%a %d %b  %H:%M}";
       clock.tooltip-format = "<tt><small>{calendar}</small></tt>";
       network.format-wifi = " {essid}";
@@ -58,6 +58,13 @@ in
       pulseaudio.format = " {volume}%";
       pulseaudio.format-muted = "󰖁 ";
       pulseaudio.on-click = "pavucontrol";
+      # battery: hidden on desktops/VMs with no battery; shows on the ThinkPad.
+      battery.format = "{icon} {capacity}%";
+      battery.format-charging = "󰂄 {capacity}%";
+      battery.format-plugged = "󰚥 {capacity}%";
+      battery.format-icons = [ "󰁺" "󰁻" "󰁼" "󰁽" "󰁾" "󰁿" "󰂀" "󰂁" "󰂂" "󰁹" ];
+      battery.states = { warning = 20; critical = 10; };
+      battery.interval = 30;
       tray.spacing = 8;
     };
     style = ''
@@ -92,6 +99,9 @@ in
       }
       #cpu { color: ${c.base0B}; }
       #memory { color: ${c.base0A}; }
+      #battery { color: ${c.base0B}; }
+      #battery.warning { color: ${c.base0A}; }
+      #battery.critical { color: ${c.base08}; }
       #network { color: ${c.base0D}; }
       #pulseaudio { color: ${c.base0E}; }
       #pulseaudio.muted { color: ${c.base03}; }
