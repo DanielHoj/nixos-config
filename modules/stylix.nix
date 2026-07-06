@@ -8,7 +8,7 @@
     enable = true;
     polarity = "dark";
     base16Scheme = "${pkgs.base16-schemes}/share/themes/kanagawa.yaml";
-    image = ../home/wallpapers/kanagawa-wave.jpg;
+    image = ../home/wallpapers/kiyochika-night.jpg;
 
     cursor = {
       name = "Adwaita";
