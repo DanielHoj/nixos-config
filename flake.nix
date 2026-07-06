@@ -63,6 +63,7 @@
         stylix.nixosModules.stylix
         ./modules/common.nix
         ./modules/desktop-niri.nix
+        ./modules/dev-services.nix
         ./modules/keyd.nix
         ./modules/stylix.nix
 

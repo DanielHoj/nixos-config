@@ -26,6 +26,9 @@ in
   # --- Media player (Stylix-themed) ---
   programs.mpv.enable = true;
 
+  # --- PDF viewer (Stylix-themed; replaces KDE okular) ---
+  programs.zathura.enable = true;
+
   # --- Launcher (fuzzel; notifications via swaync in ./desktop.nix) ---
   programs.fuzzel.enable = true;
 
@@ -106,6 +109,8 @@ in
     pavucontrol               # audio GUI (waybar click target)
     easyeffects               # PipeWire EQ/effects
     obsidian                  # notes (unfree)
+    imv                       # Wayland image viewer (replaces KDE gwenview)
+    google-chrome             # secondary browser (unfree); Zen is primary (./zen.nix)
     # Zen browser is configured in ./zen.nix (HM module installs the package).
   ];
 }

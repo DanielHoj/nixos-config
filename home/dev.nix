@@ -31,6 +31,11 @@
     ripgrep
     fd
     curl
+    wget
+    rsync
     unzip
+    jq                 # JSON wrangling
+    gh                 # GitHub CLI
+    tldr               # concise command examples
   ];
 }
