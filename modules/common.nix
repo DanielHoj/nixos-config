@@ -5,10 +5,19 @@
   # --- Boot (UEFI, systemd-boot) ---
   boot.loader.systemd-boot.enable = true;
   boot.loader.efi.canTouchEfiVariables = true;
+  # Cap kept generations so the 1 GiB ESP can't fill with old kernels.
+  boot.loader.systemd-boot.configurationLimit = 10;
 
   # --- Nix / flakes ---
   nix.settings.experimental-features = [ "nix-command" "flakes" ];
   nixpkgs.config.allowUnfree = true;
+  # Disk hygiene: dedup the store + prune old generations weekly.
+  nix.settings.auto-optimise-store = true;
+  nix.gc = {
+    automatic = true;
+    dates = "weekly";
+    options = "--delete-older-than 30d";
+  };
 
   # --- Networking ---
   networking.networkmanager.enable = true;
@@ -38,8 +47,10 @@
   hardware.bluetooth.enable = true;
   services.blueman.enable = true;
 
-  # --- SSH ---
+  # --- SSH (key-only; the authorized key above is the sole way in) ---
   services.openssh.enable = true;
+  services.openssh.settings.PasswordAuthentication = false;
+  services.openssh.settings.KbdInteractiveAuthentication = false;
 
   # --- Bootstrap tools at system level ---
   # neovim from unstable: the nvim config targets 0.11+ APIs (vim.lsp.enable,
