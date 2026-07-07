@@ -3,6 +3,9 @@
 # Status-bar colors come from Stylix (targets.tmux). Plugins not in nixpkgs
 # (ukiyo theme, tmux-line-numbers, agent-indicator) are dropped; ukiyo is
 # replaced by the Stylix theme.
+let
+  c = config.lib.stylix.colors.withHashtag;
+in
 {
   programs.tmux = {
     enable = true;
@@ -63,6 +66,12 @@
       # Show current command in pane border
       set -g pane-border-status top
       set -g pane-border-format "#{pane_index} #{pane_current_command}"
+      # `pane-border-indicators colour` (the default for 2 panes) colours only
+      # HALF the shared divider to point at the active pane — reads as a glitch.
+      # Turn it off; distinguish the active pane by a clear accent border instead.
+      set -g pane-border-indicators off
+      set -g pane-active-border-style "fg=${c.base0D}"
+      set -g pane-border-style "fg=${c.base03}"
 
       # Terminal / color / nvim integration
       set -ga terminal-overrides ",*256col*:Tc"
