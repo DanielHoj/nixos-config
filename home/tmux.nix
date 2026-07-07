@@ -53,8 +53,10 @@
       bind-key -T copy-mode-vi y send-keys -X copy-pipe-and-cancel "wl-copy"
       bind-key -T copy-mode-vi MouseDragEnd1Pane send-keys -X copy-pipe-and-cancel "wl-copy"
 
-      # Status bar at top (colors from Stylix)
-      set-option -g status-position top
+      # Status bar at the BOTTOM. With pane-border-status on, a status bar at the
+      # top triggers a tmux rendering bug (tmux#2493) where pane borders draw as
+      # broken/dotted lines that don't join at corners. Bottom status fixes it.
+      set-option -g status-position bottom
       set -g status-left-length 100
       set -g status-right-length 100
 
