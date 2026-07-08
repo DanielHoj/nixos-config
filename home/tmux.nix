@@ -2,10 +2,9 @@
 # tmux ported from ~/dotfiles/tmux/.tmux.conf into native HM.
 # Status-bar colors come from Stylix (targets.tmux). Plugins not in nixpkgs
 # (ukiyo theme, tmux-line-numbers, agent-indicator) are dropped; ukiyo is
-# replaced by the Stylix theme.
-let
-  c = config.lib.stylix.colors.withHashtag;
-in
+# replaced by the Stylix theme. (Kept Stylix-independent so this module works in
+# the headless `base` home profile too — the two pane-border colours below are
+# hardcoded kanagawa values rather than pulled from the Stylix palette.)
 {
   programs.tmux = {
     enable = true;
@@ -70,8 +69,8 @@ in
       # HALF the shared divider to point at the active pane — reads as a glitch.
       # Turn it off; distinguish the active pane by a clear accent border instead.
       set -g pane-border-indicators off
-      set -g pane-active-border-style "fg=${c.base0D}"
-      set -g pane-border-style "fg=${c.base03}"
+      set -g pane-active-border-style "fg=#7e9cd8"   # kanagawa crystalBlue
+      set -g pane-border-style "fg=#54546d"          # kanagawa sumiInk4 (dim)
 
       # Terminal / color / nvim integration
       set -ga terminal-overrides ",*256col*:Tc"

@@ -53,19 +53,12 @@
         };
       };
 
-      # Modules every host shares: overlays, niri, Stylix theming, the common
-      # base system, the niri desktop, keyd, and Home Manager for danielh.
-      # Host-specific config (hardware, hostname, guest agents) is layered on
-      # per host in hosts/<host>/.
-      sharedModules = [
-        { nixpkgs.overlays = [ unstableOverlay niri-flake.overlays.niri ]; }
-        niri-flake.nixosModules.niri
-        stylix.nixosModules.stylix
+      # Modules EVERY host shares (desktop or headless): the unstable overlay,
+      # the common base system, and Home Manager wiring. The home *profile* is
+      # chosen per host (dev base for headless, desktop for graphical).
+      baseModules = [
+        { nixpkgs.overlays = [ unstableOverlay ]; }
         ./modules/common.nix
-        ./modules/desktop-niri.nix
-        ./modules/dev-services.nix
-        ./modules/keyd.nix
-        ./modules/stylix.nix
 
         home-manager.nixosModules.home-manager
         {
@@ -75,30 +68,63 @@
           # wants to take over, e.g. atuin's runtime-created config.toml.
           home-manager.backupFileExtension = "backup";
           home-manager.extraSpecialArgs = { inherit zen-browser; };
-          home-manager.users.danielh = import ./home/danielh.nix;
         }
       ];
 
-      mkHost = hostModules: nixpkgs.lib.nixosSystem {
-        inherit system;
-        specialArgs = { inherit niri-flake; };
-        modules = sharedModules ++ hostModules;
-      };
+      # Modules only graphical hosts need: niri (overlay + module + cache),
+      # Stylix theming, the niri desktop, keyd remaps, and dev services.
+      desktopModules = [
+        { nixpkgs.overlays = [ niri-flake.overlays.niri ]; }
+        niri-flake.nixosModules.niri
+        stylix.nixosModules.stylix
+        ./modules/desktop-niri.nix
+        ./modules/dev-services.nix
+        ./modules/keyd.nix
+        ./modules/stylix.nix
+      ];
+
+      # Build a host: pick its home profile, whether it's a desktop, and its
+      # host-specific system modules (hardware, hostname, disko…).
+      mkHost = { profile, systemModules ? [], desktop ? true }:
+        nixpkgs.lib.nixosSystem {
+          inherit system;
+          specialArgs = { inherit niri-flake; };
+          modules =
+            baseModules
+            ++ nixpkgs.lib.optionals desktop desktopModules
+            ++ [ { home-manager.users.danielh = import profile; } ]
+            ++ systemModules;
+        };
     in
     {
       nixosConfigurations = {
-        # QEMU eval VM.
-        nixos-vm = mkHost [ ./hosts/nixos-vm/configuration.nix ];
+        # QEMU eval VM (desktop).
+        nixos-vm = mkHost {
+          profile = ./home/profiles/desktop.nix;
+          systemModules = [ ./hosts/nixos-vm/configuration.nix ];
+        };
 
-        # ThinkPad T14 Gen 2i — bare-metal migration target.
-        thinkpad = mkHost [
-          ./hosts/thinkpad/configuration.nix
-          # nixos-hardware only exposes gen-specific T14 Intel modules as flake
-          # outputs; import the generic t14/intel dir directly (it pulls in the
-          # t14 base + common-cpu-intel + common-gpu-intel).
-          "${nixos-hardware}/lenovo/thinkpad/t14/intel"
-          disko.nixosModules.disko
-        ];
+        # ThinkPad T14 Gen 2i — bare-metal desktop (migration target).
+        thinkpad = mkHost {
+          profile = ./home/profiles/desktop.nix;
+          systemModules = [
+            ./hosts/thinkpad/configuration.nix
+            # nixos-hardware only exposes gen-specific T14 Intel modules; import
+            # the generic t14/intel dir (t14 base + common-cpu-intel + gpu-intel).
+            "${nixos-hardware}/lenovo/thinkpad/t14/intel"
+            disko.nixosModules.disko
+          ];
+        };
+
+        # ThinkCentre M75q homelab — headless NixOS hypervisor (Incus + Talos).
+        homelab = mkHost {
+          desktop = false;
+          profile = ./home/profiles/base.nix;
+          systemModules = [
+            ./hosts/homelab/configuration.nix
+            disko.nixosModules.disko
+          ];
+        };
       };
     };
 }
