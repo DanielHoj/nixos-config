@@ -20,10 +20,11 @@
     # keys. Coexists with the key-only openssh in common.nix; handy for headless.
     extraUpFlags = [ "--ssh" ];
 
-    # Headless enrollment without an interactive `tailscale up`: point this at a
-    # tailnet auth key once sops-nix lands, and the node joins on first boot.
-    # Until then, enroll once by hand:  sudo tailscale up --ssh
-    #   authKeyFile = config.sops.secrets.tailscale-authkey.path;
+    # Headless enrolment with no interactive `tailscale up`: the node joins on
+    # first boot using the sops-managed reusable auth key. Drop a real key in
+    # with `sops secrets/secrets.yaml` (the committed value is a placeholder, so
+    # enrolment is a no-op until then — replace it before relying on this).
+    authKeyFile = config.sops.secrets.tailscale-authkey.path;
   };
 
   # Trust traffic arriving over the tailnet (peers are authenticated by

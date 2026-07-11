@@ -35,9 +35,15 @@
       url = "github:nix-community/disko";
       inputs.nixpkgs.follows = "nixpkgs";
     };
+
+    # Declarative secrets (age-encrypted, decrypted at activation via SSH host key).
+    sops-nix = {
+      url = "github:Mic92/sops-nix";
+      inputs.nixpkgs.follows = "nixpkgs";
+    };
   };
 
-  outputs = { self, nixpkgs, nixpkgs-unstable, home-manager, niri-flake, zen-browser, stylix, nixos-hardware, disko, ... }:
+  outputs = { self, nixpkgs, nixpkgs-unstable, home-manager, niri-flake, zen-browser, stylix, nixos-hardware, disko, sops-nix, ... }:
     let
       system = "x86_64-linux";
 
@@ -59,6 +65,10 @@
       baseModules = [
         { nixpkgs.overlays = [ unstableOverlay ]; }
         ./modules/common.nix
+
+        # Declarative secrets (age via SSH host key); consumed by modules/sops.nix.
+        sops-nix.nixosModules.sops
+        ./modules/sops.nix
 
         home-manager.nixosModules.home-manager
         {
