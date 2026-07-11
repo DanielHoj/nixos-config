@@ -20,11 +20,10 @@
     # keys. Coexists with the key-only openssh in common.nix; handy for headless.
     extraUpFlags = [ "--ssh" ];
 
-    # Headless enrolment with no interactive `tailscale up`: the node joins on
-    # first boot using the sops-managed reusable auth key. Drop a real key in
-    # with `sops secrets/secrets.yaml` (the committed value is a placeholder, so
-    # enrolment is a no-op until then — replace it before relying on this).
-    authKeyFile = config.sops.secrets.tailscale-authkey.path;
+    # NOTE: headless auto-enrolment (authKeyFile = the sops tailscale-authkey) is
+    # set per-host where it's wanted — see hosts/homelab. Interactive hosts (the
+    # laptops, the eval VM) enrol once by hand: `sudo tailscale up --ssh`, which
+    # avoids a failed autoconnect unit while the committed key is a placeholder.
   };
 
   # Trust traffic arriving over the tailnet (peers are authenticated by

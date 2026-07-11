@@ -33,6 +33,11 @@
     "--advertise-routes=10.100.0.0/24"  # Incus incusbr0 subnet (see modules/incus.nix)
     "--advertise-exit-node"
   ];
+  # Headless box: enrol on first boot from the sops-managed reusable auth key,
+  # no interactive `tailscale up`. Put a REAL key in `sops secrets/secrets.yaml`
+  # before first boot — the committed value is a placeholder (a bad key would
+  # just fail the autoconnect unit, harmlessly, until replaced).
+  services.tailscale.authKeyFile = config.sops.secrets.tailscale-authkey.path;
 
   # First install target; do not change casually.
   system.stateVersion = "25.05";
