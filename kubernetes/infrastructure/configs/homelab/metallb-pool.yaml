@@ -1,0 +1,21 @@
+# MetalLB address pool for the HOMELAB — a slice of the home LAN reserved
+# OUTSIDE the router's DHCP range so nothing else hands these out. L2 mode: the
+# node answers ARP for these IPs on the LAN. <REPLACE the range with a free
+# block on your actual subnet>.
+apiVersion: metallb.io/v1beta1
+kind: IPAddressPool
+metadata:
+  name: homelab-pool
+  namespace: metallb-system
+spec:
+  addresses:
+    - 192.168.1.240-192.168.1.250   # <REPLACE with a free range on your LAN>
+---
+apiVersion: metallb.io/v1beta1
+kind: L2Advertisement
+metadata:
+  name: homelab-l2
+  namespace: metallb-system
+spec:
+  ipAddressPools:
+    - homelab-pool

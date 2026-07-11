@@ -1,0 +1,41 @@
+# Flux entrypoints for HETZNER shared infrastructure, in two ordered stages:
+#   1. infra-controllers — cert-manager / ingress-nginx / metallb (the operators)
+#   2. infra-configs      — ClusterIssuers + MetalLB pool (need the CRDs above)
+# apps.yaml then dependsOn infra-configs so ingress + issuers exist first.
+apiVersion: kustomize.toolkit.fluxcd.io/v1
+kind: Kustomization
+metadata:
+  name: infra-controllers
+  namespace: flux-system
+spec:
+  interval: 1h
+  retryInterval: 1m
+  path: ./kubernetes/infrastructure/controllers
+  prune: true
+  wait: true
+  sourceRef:
+    kind: GitRepository
+    name: flux-system
+---
+apiVersion: kustomize.toolkit.fluxcd.io/v1
+kind: Kustomization
+metadata:
+  name: infra-configs
+  namespace: flux-system
+spec:
+  dependsOn:
+    - name: infra-controllers
+  interval: 1h
+  retryInterval: 1m
+  path: ./kubernetes/infrastructure/configs/hetzner
+  prune: true
+  wait: true
+  sourceRef:
+    kind: GitRepository
+    name: flux-system
+  # Decrypt any *.sops.yaml under this path with the in-cluster age key
+  # (the sops-age Secret created at bootstrap — see kubernetes/README.md).
+  decryption:
+    provider: sops
+    secretRef:
+      name: sops-age

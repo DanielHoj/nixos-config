@@ -1,0 +1,19 @@
+# Namespaces for the shared controllers. Listed first in the kustomization so
+# they always exist before the HelmReleases that target them.
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: cert-manager
+---
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: ingress-nginx
+---
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: metallb-system
+  labels:
+    # MetalLB's speaker runs on the host network → needs privileged PSA.
+    pod-security.kubernetes.io/enforce: privileged

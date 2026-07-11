@@ -10,13 +10,30 @@
 # After installing a new host, derive its key, add it below, then re-encrypt:
 #   sops updatekeys secrets/secrets.yaml
 keys:
+  # NixOS host keys (SSH-host-key-derived): decrypt secrets/*.yaml at activation.
   - &admin age16ldf5l7p2kyxzqal0s9xcvc68wmcy5636uhxkde737t4h6hwluvq6d0kpn
   - &vm     age1tlsxm9tk0zcam05l9sx325u5jfy475xtatsue2xz366jm75qrs6qfguxqh
   # - &thinkpad  ageXXX   # add after installing the T14  (ssh-to-age its host key)
   # - &homelab   ageXXX   # add after installing the M75q
+  # Cluster (in-k8s Flux) age keys — DEDICATED per cluster, generated at
+  # bootstrap (`age-keygen`), stored as the `sops-age` Secret in flux-system.
+  # Kept separate from host keys so a compromised cluster can't read host
+  # secrets. Uncomment + fill after generating (see kubernetes/README.md).
+  # - &homelab-cluster  ageXXX
+  # - &hetzner-cluster  ageXXX
 creation_rules:
+  # NixOS host secrets — each host decrypts with its own SSH host key.
   - path_regex: secrets/[^/]+\.yaml$
     key_groups:
       - age:
           - *admin
           - *vm
+  # Cluster secrets — Flux decrypts in-cluster. Encrypt to admin (for editing) +
+  # both cluster keys. For per-cluster isolation, add narrower path_regex rules
+  # (e.g. infrastructure/configs/homelab) scoped to a single cluster key.
+  - path_regex: kubernetes/.*\.sops\.ya?ml$
+    key_groups:
+      - age:
+          - *admin
+          # - *homelab-cluster
+          # - *hetzner-cluster

@@ -1,0 +1,6 @@
+# Shared infra config (identical on both clusters). Per-cluster overlays add
+# their own MetalLB address pool on top of this.
+apiVersion: kustomize.config.k8s.io/v1beta1
+kind: Kustomization
+resources:
+  - cluster-issuer.yaml

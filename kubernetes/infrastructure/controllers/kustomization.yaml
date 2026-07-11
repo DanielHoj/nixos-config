@@ -1,0 +1,10 @@
+# All shared controllers, applied as one Flux Kustomization (infra-controllers).
+# Identical across both clusters — that's the parity point; anything that
+# differs per cluster lives in ../configs/<cluster>.
+apiVersion: kustomize.config.k8s.io/v1beta1
+kind: Kustomization
+resources:
+  - namespaces.yaml
+  - cert-manager.yaml
+  - ingress-nginx.yaml
+  - metallb.yaml

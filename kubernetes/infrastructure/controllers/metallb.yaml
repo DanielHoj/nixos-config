@@ -1,0 +1,27 @@
+# MetalLB — gives bare-metal clusters real LoadBalancer IPs (no cloud LB to lean
+# on). Just the controller here; the address pool + L2Advertisement are
+# cluster-specific and live in ../configs/<cluster>/metallb-pool.yaml.
+apiVersion: source.toolkit.fluxcd.io/v1
+kind: HelmRepository
+metadata:
+  name: metallb
+  namespace: flux-system
+spec:
+  interval: 1h
+  url: https://metallb.github.io/metallb
+---
+apiVersion: helm.toolkit.fluxcd.io/v2
+kind: HelmRelease
+metadata:
+  name: metallb
+  namespace: metallb-system
+spec:
+  interval: 1h
+  chart:
+    spec:
+      chart: metallb
+      version: "0.14.9"   # pin-and-verify at bootstrap
+      sourceRef:
+        kind: HelmRepository
+        name: metallb
+        namespace: flux-system

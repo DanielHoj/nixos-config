@@ -1,0 +1,30 @@
+# cert-manager — issues/renews TLS certs (Let's Encrypt via the ClusterIssuers
+# in ../configs/base). CRDs are installed by the chart (crds.enabled) so the
+# ClusterIssuer CRs in infra-configs can apply once this HelmRelease is Ready.
+apiVersion: source.toolkit.fluxcd.io/v1
+kind: HelmRepository
+metadata:
+  name: jetstack
+  namespace: flux-system
+spec:
+  interval: 1h
+  url: https://charts.jetstack.io
+---
+apiVersion: helm.toolkit.fluxcd.io/v2
+kind: HelmRelease
+metadata:
+  name: cert-manager
+  namespace: cert-manager
+spec:
+  interval: 1h
+  chart:
+    spec:
+      chart: cert-manager
+      version: "v1.17.1"   # pin-and-verify against charts.jetstack.io at bootstrap
+      sourceRef:
+        kind: HelmRepository
+        name: jetstack
+        namespace: flux-system
+  values:
+    crds:
+      enabled: true
