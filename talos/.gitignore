@@ -1,0 +1,8 @@
+# NEVER commit these — the repo is public.
+# talhelper gensecret output (cluster CA + certs + bootstrap tokens):
+talsecret.yaml
+talsecret.sops.yaml.dec
+# Generated per-node machine configs + the admin talosconfig/kubeconfig:
+clusterconfig/
+*.kubeconfig
+talosconfig

@@ -1,0 +1,32 @@
+# talhelper config for the HOMELAB test cluster (Talos VMs on Incus).
+# Mirror of hosts/hetzner — keep talosVersion + kubernetesVersion IDENTICAL to
+# prod so this is a faithful test bed. Fill in the real Incus VM IPs at build.
+#
+# Flow:  talhelper genconfig  →  talosctl apply-config  →  talosctl bootstrap
+#        (secrets come from ../talsecret.yaml — generate once, keep encrypted)
+clusterName: homelab
+talosVersion: v1.9.2          # <PIN — must match hetzner/talconfig.yaml>
+kubernetesVersion: v1.32.0    # <PIN — must match hetzner/talconfig.yaml>
+
+endpoint: https://10.100.0.10:6443   # control-plane VIP / first CP node
+
+# Single control-plane + 2 workers (right-sized for one Tiny; mirrors a small
+# prod topology). Add nodes here to scale.
+nodes:
+  - hostname: cp-1
+    ipAddress: 10.100.0.10          # <CONFIRM: Incus VM IP on incusbr0>
+    controlPlane: true
+    installDisk: /dev/sda
+  - hostname: worker-1
+    ipAddress: 10.100.0.11
+    controlPlane: false
+    installDisk: /dev/sda
+  - hostname: worker-2
+    ipAddress: 10.100.0.12
+    controlPlane: false
+    installDisk: /dev/sda
+
+# Shared machine-config patches applied to every node (both clusters point at
+# the same files, so config drift between test and prod is impossible).
+patches:
+  - "@../patches/common.yaml"

@@ -1,0 +1,17 @@
+# Shared Talos machine-config patch — applied to every node in BOTH clusters
+# (homelab + hetzner) so test and prod never drift. Keep cluster-specific bits
+# (IPs, install disks) in the per-cluster talconfig.yaml, not here.
+#
+# This is a starting point; add cluster-wide settings here as you need them.
+machine:
+  # Example: install extra kernel args / sysctls / registries here.
+  sysctls:
+    # k8s / etcd-friendly defaults; extend as needed.
+    net.core.somaxconn: "65535"
+  # Talos ships flannel by default. To match a Cilium prod setup instead, set
+  # cluster.network.cni.name = none here and install Cilium via Flux (see
+  # kubernetes/README.md). Left as Talos default for the initial scaffold.
+cluster:
+  # allowSchedulingOnControlPlanes lets the single-CP homelab actually run
+  # workloads. Prod (with dedicated workers) can override this to false.
+  allowSchedulingOnControlPlanes: true

@@ -1,0 +1,7 @@
+# Base app manifests. The per-environment overlays reference this and patch it.
+apiVersion: kustomize.config.k8s.io/v1beta1
+kind: Kustomization
+resources:
+  - namespace.yaml
+  - deployment.yaml
+  - service.yaml

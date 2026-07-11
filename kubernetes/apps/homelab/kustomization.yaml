@@ -1,0 +1,15 @@
+# HOMELAB (test) overlay — thin patches over ../base. Test changes here first,
+# then promote the same change to hetzner/.
+apiVersion: kustomize.config.k8s.io/v1beta1
+kind: Kustomization
+namespace: myapp
+resources:
+  - ../base
+# Keep it lean on the Tiny: single replica for the test cluster.
+replicas:
+  - name: myapp
+    count: 1
+# Pin the image tag you're testing (promote to hetzner once it's good):
+images:
+  - name: ghcr.io/danielhoj/myapp
+    newTag: latest

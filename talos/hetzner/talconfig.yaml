@@ -1,0 +1,19 @@
+# talhelper config for the HETZNER prod cluster (Talos on bare metal).
+# Same shape as homelab/talconfig.yaml, same pinned versions, same shared
+# patches — only the node IPs / install disks / topology differ. Build the
+# homelab first, prove it, then this is mostly "point at the real box(es)".
+clusterName: hetzner
+talosVersion: v1.9.2          # <PIN — must match homelab/talconfig.yaml>
+kubernetesVersion: v1.32.0    # <PIN — must match homelab/talconfig.yaml>
+
+endpoint: https://REPLACE_ME:6443   # <public IP / kube-vip / load-balancer>
+
+nodes:
+  - hostname: prod-cp-1
+    ipAddress: REPLACE_ME             # <Hetzner box IP>
+    controlPlane: true
+    installDisk: /dev/nvme0n1         # <CONFIRM on the metal box>
+  # Add workers / more control-planes as the prod topology grows.
+
+patches:
+  - "@../patches/common.yaml"
