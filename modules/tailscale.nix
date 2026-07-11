@@ -13,9 +13,9 @@
     # connections. checkReversePath is loosened below for the same reason.
     openFirewall = true;
     # "client" lets this node USE exit nodes / accept advertised subnet routes
-    # (e.g. the homelab's Incus subnet). The homelab bumps this to "both" to
-    # also forward/advertise. "none" would disable both directions.
-    useRoutingFeatures = "client";
+    # (e.g. the homelab's Incus subnet). mkDefault so the homelab can override
+    # to "both" (also forward/advertise) without a conflict. "none" = neither.
+    useRoutingFeatures = lib.mkDefault "client";
     # Tailscale SSH: authenticate SSH by tailnet identity (ACL-gated) instead of
     # keys. Coexists with the key-only openssh in common.nix; handy for headless.
     extraUpFlags = [ "--ssh" ];
