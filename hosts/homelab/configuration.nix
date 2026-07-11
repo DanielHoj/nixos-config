@@ -23,6 +23,17 @@
   # real access path; see modules/common.nix authorizedKeys).
   users.users.danielh.initialPassword = "changeme";
 
+  # This box is the tailnet's gateway into the lab: forward/advertise routes
+  # (subnet router) and offer itself as an exit node. Advertising the Incus
+  # bridge subnet lets the laptops hit the Talos VM IPs (10.100.0.10-12)
+  # directly over the tailnet — no LAN presence, no port-forwarding.
+  # Both need one-time approval in the Tailscale admin console after enrolling.
+  services.tailscale.useRoutingFeatures = "both";
+  services.tailscale.extraUpFlags = [
+    "--advertise-routes=10.100.0.0/24"  # Incus incusbr0 subnet (see modules/incus.nix)
+    "--advertise-exit-node"
+  ];
+
   # First install target; do not change casually.
   system.stateVersion = "25.05";
 }

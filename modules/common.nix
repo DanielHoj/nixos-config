@@ -2,6 +2,8 @@
 # Base system config shared by every host (VM + bare metal). Host-specific bits
 # (hostname, initial password, guest agents, hardware) live in hosts/<host>/.
 {
+  imports = [ ./tailscale.nix ];
+
   # --- Boot (UEFI, systemd-boot) ---
   boot.loader.systemd-boot.enable = true;
   boot.loader.efi.canTouchEfiVariables = true;
