@@ -37,6 +37,12 @@
   # no interactive `tailscale up`. Put a REAL key in `sops secrets/secrets.yaml`
   # before first boot — the committed value is a placeholder (a bad key would
   # just fail the autoconnect unit, harmlessly, until replaced).
+  # Declared HERE (not in the shared sops module) because only this host
+  # consumes it — see the note in modules/sops.nix. NB: the homelab's own SSH
+  # host key must be added to .sops.yaml (`sops updatekeys`) BEFORE first boot,
+  # or this decryption fails activation (same bootstrap trap the T14 avoids by
+  # declaring no secrets).
+  sops.secrets.tailscale-authkey = { };
   services.tailscale.authKeyFile = config.sops.secrets.tailscale-authkey.path;
 
   # First install target; do not change casually.

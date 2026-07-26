@@ -11,10 +11,11 @@
   # a recipient in .sops.yaml (add new hosts there, then `sops updatekeys`).
   sops.age.sshKeyPaths = [ "/etc/ssh/ssh_host_ed25519_key" ];
 
-  # Declared secrets are decrypted to /run/secrets/<name> (root-only tmpfs).
-  # tailscale-authkey backs services.tailscale.authKeyFile once a real reusable
-  # key is stored — enrol the headless homelab with zero interaction.
-  sops.secrets.tailscale-authkey = { };
+  # NOTE: secrets are declared PER-HOST, where they're consumed (e.g. the
+  # homelab declares tailscale-authkey). Declaring a secret here (baseModules)
+  # would force EVERY host to decrypt it at activation — and a freshly-installed
+  # host isn't a recipient in .sops.yaml yet, so its first activation would FAIL.
+  # Hosts with no declared secrets run sops-install-secrets as a no-op.
 
   # Editing/enrolment tooling on every host: `sops secrets/secrets.yaml` to
   # edit; `ssh-to-age` to derive a freshly-installed host's recipient key.
