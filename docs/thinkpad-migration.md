@@ -18,13 +18,26 @@ Already safe in GitHub (just confirm nothing uncommitted):
 
 **Copy to an external drive or another machine** (not in git):
 - `~/.ssh/` — private keys (**critical**; nothing works without these)
+- `~/.config/sops/age/keys.txt` — **the sops admin age key (critical)**. This is
+  the master key for editing every secret in the repo. If it's lost you can't
+  edit secrets anymore. Also store a copy in Proton Pass. (It lives on THIS
+  machine right now and gets wiped otherwise.)
 - `~/.gnupg/` — GPG keys (if used)
+- **Local dev state not in git** — check for anything you care about:
+  - Postgres: `pg_dumpall > ~/pgdump.sql` if any local DB has data worth keeping.
+  - Docker: `docker volume ls` — back up any volume with real data (images/
+    containers themselves are disposable; volumes aren't).
 - Personal files: `~/Documents`, `~/Pictures`, `~/Downloads`, Obsidian vault, etc.
-- Any app data/config not covered by dotfiles (`~/.local/share`, `~/.config/*` you care about)
-- Browser: bookmarks/passwords are in **Proton Pass (cloud)**; export anything else you want from the current browser
+- Shell history (optional): `~/.local/share/atuin/` if you want it carried over.
+- Any other app data/config not covered by dotfiles (`~/.local/share`, `~/.config/*`).
+- Browser: bookmarks/passwords are in **Proton Pass (cloud)**; export anything
+  else you want (Zen bookmarks/open tabs) — Zen starts fresh otherwise.
 
-Passwords are in Proton Pass; Zen starts fresh. Verify the backup is readable on
-another device **before** wiping.
+⚠ If a cleartext secrets file is still lying around (e.g. an old
+`~/passwords.csv` Firefox export), **`shred -u` it** — don't copy it into the
+backup. Passwords live in Proton Pass.
+
+Verify the backup is readable on another device **before** wiping.
 
 ---
 
@@ -37,8 +50,13 @@ sudo dd if=nixos-*-26.05-x86_64-linux.iso of=/dev/sdX bs=4M status=progress conv
 ```
 
 ### 3.2 BIOS prep
-Reboot → Enter (F1) BIOS → **Config → Power → Sleep State = Linux** (needed for
-suspend-to-RAM on this ThinkPad). Boot the USB (F12 boot menu).
+Reboot → Enter (F1) BIOS →
+- **Config → Power → Sleep State = Linux** (suspend-to-RAM on this ThinkPad).
+- **Security → Secure Boot = Disabled.** systemd-boot without lanzaboote won't
+  boot with Secure Boot on — the install would succeed but the machine wouldn't
+  boot. (EndeavourOS likely already had it off, but confirm.)
+
+Boot the USB (F12 boot menu).
 
 ### 3.3 Network on the live system
 - **Ethernet (simplest):** plug in — it just works.
@@ -92,6 +110,9 @@ Set the **root** password when prompted. Then `sudo reboot` and remove the USB.
    ```sh
    # ~/.ssh from backup, then:
    chmod 700 ~/.ssh && chmod 600 ~/.ssh/id_*
+   # sops admin age key (so you can edit secrets from this machine):
+   mkdir -p ~/.config/sops/age && cp <backup>/keys.txt ~/.config/sops/age/keys.txt
+   chmod 600 ~/.config/sops/age/keys.txt
    ```
    Restore `~/.gnupg`, personal files.
 4. Clone the repos to their expected live-edit locations:
@@ -108,6 +129,21 @@ Set the **root** password when prompted. Then `sudo reboot` and remove the USB.
 6. Future rebuilds: `sudo nixos-rebuild switch --flake ~/nixos-config#thinkpad`.
 7. Apps: open Zen (`Mod+B`) once to seed the profile (spaces materialize per the
    zen notes), log into Proton Pass + Proton VPN.
+8. **Tailscale** — enrol this laptop on the tailnet (interactive host, no auth
+   key): `sudo tailscale up --ssh`. (It won't auto-enrol; that's homelab-only.)
+9. **Fingerprint** (optional): `fprintd-enroll` then test with `sudo -k; sudo true`.
+10. **pi ecosystem plugins** (npm-global, not in Nix — re-install imperatively):
+    ```sh
+    npm i -g pi-vim pi-subagents pi-memory pi-mcp-adapter pi-observational-memory
+    ```
+11. Restore local dev state if you backed it up: `psql -d danielh < ~/pgdump.sql`,
+    Docker volumes, etc.
+
+> **sops on the T14:** by design this host decrypts *nothing* at activation (it
+> declares no secrets — that's why the install doesn't need the T14 to be a
+> `.sops.yaml` recipient). If you later want it to hold a secret, derive its key
+> (`ssh-to-age < /etc/ssh/ssh_host_ed25519_key.pub`), add it under `keys:` in
+> `.sops.yaml`, `sops updatekeys secrets/secrets.yaml`, then declare the secret.
 
 ### Post-install validation checklist
 - [ ] niri session starts (greetd → tuigreet → niri), waybar visible
@@ -118,6 +154,8 @@ Set the **root** password when prompted. Then `sudo reboot` and remove the USB.
 - [ ] Intel GPU accel — `nix-shell -p libva-utils --run vainfo`
 - [ ] Trackpoint/touchpad, keyd remaps (Caps→Esc/Super), compose key (æøå)
 - [ ] `nixos-rebuild switch` from `~/nixos-config` succeeds
+- [ ] Git over SSH works (key restored) — `git -C ~/nixos-config pull`
+- [ ] Tailscale enrolled — `tailscale status` lists the tailnet
 
 ### If first boot fails
 The NixOS boot menu keeps older generations, but this is a fresh install (one
