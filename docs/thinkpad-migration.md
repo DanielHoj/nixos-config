@@ -125,7 +125,10 @@ Set the **root** password when prompted. Then `sudo reboot` and remove the USB.
 ## Phase 4 — First boot & restore
 
 1. Log in as **danielh** / `changeme` → run `passwd` immediately.
-2. Network: `nmtui` (NetworkManager is enabled) — connect WiFi.
+2. Network: `nmtui` (NetworkManager is enabled) → **Activate a connection** →
+   select **`Zyxel_9D81`** → enter the Wi-Fi password (WPA3; it's in Proton Pass
+   / on the router). You only do this once — NetworkManager saves it and
+   auto-reconnects on every boot thereafter. (Or use Ethernet, which just works.)
 3. Restore keys/data from backup:
    ```sh
    # ~/.ssh from backup, then:
