@@ -73,15 +73,26 @@ Reboot → Enter (F1) BIOS →
 Boot the USB (F12 boot menu).
 
 ### 3.3 Network on the live system
-- **Ethernet (simplest):** plug in — it just works.
-- **WiFi (graphical ISO):** `nmtui` → connect to your SSID.
-- **WiFi (minimal ISO):** find the wireless interface first — with predictable
-  naming it's likely `wlp0s20f3`, not `wlan0`:
+- **Ethernet (strongly recommended for the install):** plug in — it just works
+  and skips all WiFi setup in the live environment. The T14 has an RJ45 port; use
+  it if you can, then go straight to 3.4.
+- **WiFi:** `Zyxel_9D81` is **WPA3 (SAE)**. If `nmcli` happens to be present (try
+  it), it's a one-liner: `nmcli device wifi connect Zyxel_9D81 --ask`. Otherwise,
+  on the **minimal** ISO use wpa_supplicant — note `wpa_passphrase` does **NOT**
+  do WPA3, so write an SAE config directly:
   ```sh
-  iw dev || ip -br link          # note the wireless iface name
+  iw dev || ip -br link          # find the wireless iface (e.g. wlp0s20f3 or wlan0)
   IFACE=wlp0s20f3                # ← set to what the command above showed
-  sudo wpa_passphrase "SSID" "PASSWORD" | sudo tee /etc/wpa_supplicant.conf
+  sudo tee /etc/wpa_supplicant.conf >/dev/null <<'EOF'
+  network={
+      ssid="Zyxel_9D81"
+      key_mgmt=SAE
+      sae_password="YOUR_WIFI_PASSWORD"
+      ieee80211w=2
+  }
+  EOF
   sudo wpa_supplicant -B -i "$IFACE" -c /etc/wpa_supplicant.conf
+  sudo dhcpcd "$IFACE"           # get an IP if one isn't assigned automatically
   ```
   Verify: `ping -c1 nixos.org`.
 
