@@ -44,7 +44,21 @@ Verify the backup is readable on another device **before** wiping.
 ## Phase 3 — Install (from a NixOS live USB)
 
 ### 3.1 Make the USB (on another machine, or this one before wiping)
-Download the **NixOS 26.05 minimal (or graphical) x86_64 ISO** from nixos.org, then:
+Download the **NixOS 26.05 minimal (or graphical) x86_64 ISO** from nixos.org.
+
+**Verify it** against the checksum on the download page — a corrupt ISO means a
+failed install on a machine that no longer has a fallback OS:
+```sh
+sha256sum nixos-*-26.05-x86_64-linux.iso   # must match the SHA256 shown on nixos.org
+```
+
+**Identify the USB stick — NOT the internal NVMe.** Writing to the wrong device
+is unrecoverable, so confirm before you `dd`:
+```sh
+lsblk -o NAME,SIZE,TYPE,TRAN,MODEL,MOUNTPOINTS   # USB = TRAN:usb + matches the stick's size
+```
+Then write it, replacing `sdX` with the **confirmed** USB device (e.g. `sdb`) —
+never `nvme0n1`:
 ```sh
 sudo dd if=nixos-*-26.05-x86_64-linux.iso of=/dev/sdX bs=4M status=progress conv=fsync
 ```
@@ -61,10 +75,13 @@ Boot the USB (F12 boot menu).
 ### 3.3 Network on the live system
 - **Ethernet (simplest):** plug in — it just works.
 - **WiFi (graphical ISO):** `nmtui` → connect to your SSID.
-- **WiFi (minimal ISO):**
+- **WiFi (minimal ISO):** find the wireless interface first — with predictable
+  naming it's likely `wlp0s20f3`, not `wlan0`:
   ```sh
+  iw dev || ip -br link          # note the wireless iface name
+  IFACE=wlp0s20f3                # ← set to what the command above showed
   sudo wpa_passphrase "SSID" "PASSWORD" | sudo tee /etc/wpa_supplicant.conf
-  sudo wpa_supplicant -B -i wlan0 -c /etc/wpa_supplicant.conf
+  sudo wpa_supplicant -B -i "$IFACE" -c /etc/wpa_supplicant.conf
   ```
   Verify: `ping -c1 nixos.org`.
 
@@ -75,8 +92,11 @@ lsblk    # CONFIRM the internal disk is /dev/nvme0n1 (matches hosts/thinkpad/dis
 ```
 
 ### 3.5 Partition + format + mount with disko (**destroys nvme0n1**)
+Run the **disko revision pinned in the repo's `flake.lock`**, not `/latest` —
+`latest` can drift from the version you tested on the VM between now and install:
 ```sh
-sudo nix --experimental-features "nix-command flakes" run github:nix-community/disko/latest -- \
+DISKO_REV=$(nix-shell -p jq --run "jq -r '.nodes.disko.locked.rev' /tmp/nixos-config/flake.lock")
+sudo nix --experimental-features "nix-command flakes" run "github:nix-community/disko/$DISKO_REV" -- \
   --mode destroy,format,mount --flake /tmp/nixos-config#thinkpad
 ```
 This wipes the disk, creates a 1 GiB ESP + ext4 root, and mounts them at `/mnt`.
@@ -89,7 +109,7 @@ replace it with the machine-accurate one (filesystems come from disko, so
 ```sh
 sudo nixos-generate-config --no-filesystems --root /mnt --show-hardware-config \
   > /tmp/nixos-config/hosts/thinkpad/hardware-configuration.nix
-git -C /tmp/nixos-config add -A     # so the (dirty) flake picks it up
+git -C /tmp/nixos-config add hosts/thinkpad/hardware-configuration.nix  # so the (dirty) flake picks it up
 ```
 
 ### 3.7 Install
@@ -131,7 +151,13 @@ Set the **root** password when prompted. Then `sudo reboot` and remove the USB.
    zen notes), log into Proton Pass + Proton VPN.
 8. **Tailscale** — enrol this laptop on the tailnet (interactive host, no auth
    key): `sudo tailscale up --ssh`. (It won't auto-enrol; that's homelab-only.)
-9. **Fingerprint** (optional): `fprintd-enroll` then test with `sudo -k; sudo true`.
+9. **Fingerprint** (optional): `fprintd-enroll`, then `sudo -k; sudo true` should
+   prompt for a finger (password still works as fallback). No manual PAM editing
+   needed — on NixOS `services.fprintd.enable` auto-wires fingerprint into the
+   sudo + login PAM stacks (`security.pam.services.*.fprintAuth`). **Caveat:**
+   libfprint doesn't support every ThinkPad reader; if `fprintd-enroll` can't
+   find the device, this unit's reader just isn't supported — skip it, nothing
+   depends on it.
 10. **pi ecosystem plugins** (npm-global, not in Nix — re-install imperatively):
     ```sh
     npm i -g pi-vim pi-subagents pi-memory pi-mcp-adapter pi-observational-memory
