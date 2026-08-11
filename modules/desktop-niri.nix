@@ -18,6 +18,11 @@
   # Secret Service (keyring) so apps like Proton Pass can store their session key.
   services.gnome.gnome-keyring.enable = true;
   services.dbus.enable = true;
+  # swayosd ships a udev rule granting the `video` group write access to the
+  # backlight brightness node. home-manager's services.swayosd only runs the
+  # daemon, it doesn't install this, so brightness keys silently no-op
+  # without it (volume works fine since PipeWire needs no special perms).
+  services.udev.packages = [ pkgs.swayosd ];
   # Portals: gtk for the file chooser/settings, gnome for screencast (so
   # screen-sharing in Zoom/Meet/browsers works), gnome-keyring for the Secret
   # portal. Routing Screencast to gtk (the old default) silently breaks it.
