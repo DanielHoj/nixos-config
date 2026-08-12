@@ -167,11 +167,12 @@
 
   programs.eza.enable = true;
 
+  # `settings` is the current HM name; userName/extraConfig were renamed.
   programs.git = {
     enable = true;
-    userName = "DanielH";
-    userEmail = "danielhoj1990@gmail.com";
-    extraConfig.init.defaultBranch = "main";
+    settings.user.name = "DanielH";
+    settings.user.email = "danielhoj1990@gmail.com";
+    settings.init.defaultBranch = "main";
   };
 
   programs.lazygit.enable = true;

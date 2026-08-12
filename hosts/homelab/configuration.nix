@@ -12,9 +12,9 @@
 
   networking.hostName = "homelab";
 
-  # ZFS requires a unique 8-hex-digit host id. CHANGE before install:
-  #   head -c 8 /etc/machine-id   (or `head -c4 /dev/urandom | od -A none -t x4`)
-  networking.hostId = "deadbeef";
+  # ZFS requires a unique 8-hex-digit host id (one per machine; used to
+  # authorise pool imports). Generated at audit: `head -c4 /dev/urandom | od -A none -t x4`.
+  networking.hostId = "df3b4534";
   boot.supportedFilesystems = [ "zfs" ];
   # Don't let ZFS ARC eat RAM the VMs need (64 GB box; cap ARC at 8 GB).
   boot.kernelParams = [ "zfs.zfs_arc_max=8589934592" ];
