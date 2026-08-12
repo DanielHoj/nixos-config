@@ -10,6 +10,22 @@ in
 {
   imports = [ zen-browser.homeModules.beta ];
 
+  # Make Zen the default browser so terminal link-clicks / xdg-open use it
+  # instead of Chrome (which had registered itself as default). HM manages
+  # ~/.config/mimeapps.list; the claude-cli handler is preserved below.
+  xdg.mimeApps = {
+    enable = true;
+    defaultApplications = {
+      "text/html" = "zen-beta.desktop";
+      "x-scheme-handler/http" = "zen-beta.desktop";
+      "x-scheme-handler/https" = "zen-beta.desktop";
+      "x-scheme-handler/about" = "zen-beta.desktop";
+      "x-scheme-handler/unknown" = "zen-beta.desktop";
+      # Claude Code CLI URL handler (was in the pre-HM mimeapps.list).
+      "x-scheme-handler/claude-cli" = "claude-code-url-handler.desktop";
+    };
+  };
+
   programs.zen-browser = {
     enable = true;
 

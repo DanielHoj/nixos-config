@@ -6,10 +6,26 @@
   programs.zsh = {
     enable = true;
     enableCompletion = true;
-    autosuggestion.enable = true;
+    autosuggestion = {
+      enable = true;
+      # Fall back to tab-completion suggestions when history has no match.
+      strategy = [ "history" "completion" ];
+    };
     syntaxHighlighting.enable = true;
-    historySubstringSearch.enable = true;
+    historySubstringSearch = {
+      enable = true;
+      # Emacs/vi-friendly cycling that doesn't fight Atuin's arrow-key binding.
+      searchUpKey = "^P";
+      searchDownKey = "^N";
+    };
     defaultKeymap = "viins"; # bindkey -v
+
+    # Tab-triggered fuzzy completion popup (real completions, not history).
+    plugins = [{
+      name = "fzf-tab";
+      src = pkgs.zsh-fzf-tab;
+      file = "share/fzf-tab/fzf-tab.plugin.zsh";
+    }];
     history = {
       size = 50000;
       save = 50000;
@@ -48,6 +64,20 @@
     };
 
     initContent = ''
+      # --- fzf-tab: Tab opens an fzf popup of completions ------------------
+      # Group headers + colored filenames in the popup.
+      zstyle ':completion:*:descriptions' format '[%d]'
+      zstyle ':completion:*' list-colors ''${(s.:.)LS_COLORS}
+      # fzf-tab needs zsh's own menu off so it can capture the completions.
+      zstyle ':completion:*' menu no
+      # Don't sort git-checkout refs (keep branch/tag order meaningful).
+      zstyle ':completion:*:git-checkout:*' sort false
+      # Preview a directory's contents when completing `cd`.
+      zstyle ':fzf-tab:complete:cd:*' fzf-preview 'eza -1 --color=always $realpath'
+      # `<` / `>` jump between completion groups in the popup.
+      zstyle ':fzf-tab:*' switch-group '<' '>'
+      # --------------------------------------------------------------------
+
       # clipboard aliases (Wayland)
       if command -v wl-copy &> /dev/null; then
         alias pbcopy="wl-copy"
@@ -62,8 +92,9 @@
       }
       bindkey -s '^y' 'copy-last-output\n'
 
-      # accept autosuggestion with Ctrl-l
-      bindkey '^l' autosuggest-accept
+      # accept autosuggestion with Ctrl-f ("forward").
+      # NOT Ctrl-l: tmux's vim-tmux-navigator grabs C-hjkl for pane movement.
+      bindkey '^f' autosuggest-accept
 
       # yazi wrapper that cd's to the last visited directory
       function y() {
@@ -121,6 +152,13 @@
     enableZshIntegration = true;
   };
 
+  # fzf binary + zsh integration (Ctrl-T files, Alt-C cd). fzf-tab reuses this.
+  # Ctrl-R stays with Atuin, which sources later and wins the binding.
+  programs.fzf = {
+    enable = true;
+    enableZshIntegration = true;
+  };
+
   # Per-project dev shells: `.envrc` with `use flake` auto-loads on cd.
   programs.direnv = {
     enable = true;
@@ -153,7 +191,7 @@
     eza
     zoxide
     pay-respects   # thefuck replacement (thefuck removed in nixpkgs 26.05)
-    fzf
+    # fzf now provided by programs.fzf above
     # nodejs_22 + bun moved to ./dev.nix (language toolchains grouped there)
   ];
 }

@@ -1,15 +1,17 @@
 { config, pkgs, lib, ... }:
-# Idiomatic nvim port: the Lua config lives in the cloned ~/dotfiles (live-
+# Idiomatic nvim port: the Lua config lives in this repo (home/nvim/, live-
 # editable via an out-of-store symlink); the LSP servers, DAP adapters, and
 # tree-sitter come from Nix instead of Mason. A /etc/NIXOS guard in the nvim
-# config disables Mason on NixOS (see dotfiles nvim). General toolchains and
+# config disables Mason on NixOS (see home/nvim). General toolchains and
 # the dual-use CLI linters/formatters these servers shell out to (ruff,
 # prettier, golangci-lint, delve, gcc, node…) live in ./dev.nix and land on
 # the same PATH.
 {
-  # nvim config from the cloned dotfiles repo (edits apply without a rebuild).
+  # nvim Lua config lives in this repo (home/nvim/), symlinked out-of-store so
+  # edits apply live without a rebuild and lazy.nvim can write lazy-lock.json /
+  # install plugins at runtime. Migrated from the old ~/dotfiles (Stow) clone.
   xdg.configFile."nvim".source =
-    config.lib.file.mkOutOfStoreSymlink "${config.home.homeDirectory}/dotfiles/nvim/.config/nvim";
+    config.lib.file.mkOutOfStoreSymlink "${config.home.homeDirectory}/nixos-config/home/nvim";
 
   # Editor plumbing only — kept on the unstable overlay because LSP servers and
   # DAP adapters move fast and need to match neovim's current APIs.
