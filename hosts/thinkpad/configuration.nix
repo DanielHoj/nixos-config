@@ -25,7 +25,10 @@
       CPU_SCALING_GOVERNOR_ON_AC = "performance";
       CPU_SCALING_GOVERNOR_ON_BAT = "powersave";
       CPU_ENERGY_PERF_POLICY_ON_AC = "performance";
-      CPU_ENERGY_PERF_POLICY_ON_BAT = "power";
+      # "power" (max EPP) made the CPU reluctant to ramp up even under load,
+      # e.g. browsing felt sluggish stuck around 1.2GHz. balance_performance
+      # still saves energy at idle but responds to bursts of load.
+      CPU_ENERGY_PERF_POLICY_ON_BAT = "balance_performance";
       # Preserve battery health: keep charge in the 75–80% band.
       START_CHARGE_THRESH_BAT0 = 75;
       STOP_CHARGE_THRESH_BAT0 = 80;
