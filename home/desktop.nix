@@ -58,9 +58,10 @@ in
       { timeout = 900; command = "${pkgs.swaylock-effects}/bin/swaylock -f"; }
       { timeout = 1800; command = "systemctl suspend"; }
     ];
-    events = [
-      { event = "before-sleep"; command = "${pkgs.swaylock-effects}/bin/swaylock -f"; }
-    ];
+    # New syntax: attrset keyed by event name (was a list of { event = ...; }).
+    events = {
+      "before-sleep" = "${pkgs.swaylock-effects}/bin/swaylock -f";
+    };
   };
 
   # --- Notification center + DND (Stylix-themed; replaces mako) ---

@@ -20,6 +20,8 @@ in
   stylix.targets.neovim.enable = false;  # nvim has its own colorscheme (colorschema.lua)
   stylix.targets.waybar.enable = false;  # custom waybar layout below (colors from Stylix palette)
   stylix.targets.niri.enable = false;    # niri config in ./niri.nix (niri-flake would else generate it)
+  # Theme the Zen profile declared in ./zen.nix (silences stylix's warning).
+  stylix.targets.zen-browser.profileNames = [ "default" ];
 
   # --- Terminal (colors/fonts/opacity from Stylix) ---
   programs.ghostty = {

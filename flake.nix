@@ -50,7 +50,8 @@
       # Overlay exposing nightly packages as pkgs.unstable.<name>
       unstableOverlay = final: prev: {
         unstable = import nixpkgs-unstable {
-          inherit (prev) system;
+          # prev.system is a deprecated alias; use the host platform form.
+          system = prev.stdenv.hostPlatform.system;
           config.allowUnfree = true;
         };
       };

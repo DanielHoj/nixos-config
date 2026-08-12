@@ -18,6 +18,9 @@
   boot.supportedFilesystems = [ "zfs" ];
   # Don't let ZFS ARC eat RAM the VMs need (64 GB box; cap ARC at 8 GB).
   boot.kernelParams = [ "zfs.zfs_arc_max=8589934592" ];
+  # tank is a DATA pool (root is ext4): never auto-import it from the initrd.
+  # (Default flips to false in 26.11; set it now.)
+  boot.zfs.forceImportRoot = false;
 
   # Bootstrap password — change with `passwd` after first boot (SSH key is the
   # real access path; see modules/common.nix authorizedKeys).
@@ -46,5 +49,5 @@
   services.tailscale.authKeyFile = config.sops.secrets.tailscale-authkey.path;
 
   # First install target; do not change casually.
-  system.stateVersion = "25.05";
+  system.stateVersion = "26.05";
 }

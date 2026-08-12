@@ -12,7 +12,9 @@
 
   home.username = "danielh";
   home.homeDirectory = "/home/danielh";
-  home.stateVersion = "25.05";
+  # 26.05: the whole setup targets 26.05 defaults (all hosts installed within
+  # days of each other against this flake, none predate the 26.05 channel).
+  home.stateVersion = "26.05";
 
   programs.home-manager.enable = true;
 

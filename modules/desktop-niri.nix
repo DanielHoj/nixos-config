@@ -6,7 +6,7 @@
   # the former matches what niri-flake's CI pushes to niri.cachix.org, so this is
   # what makes the binary cache actually hit instead of compiling from source.
   programs.niri.enable = true;
-  programs.niri.package = niri-flake.packages.${pkgs.system}.niri-unstable;
+  programs.niri.package = niri-flake.packages.${pkgs.stdenv.hostPlatform.system}.niri-unstable;
 
   # niri-flake binary cache so nightly niri is fetched, not built.
   niri-flake.cache.enable = true;
@@ -40,7 +40,7 @@
   services.greetd = {
     enable = true;
     settings.default_session = {
-      command = "${pkgs.greetd.tuigreet}/bin/tuigreet --time --remember --cmd niri-session";
+      command = "${pkgs.tuigreet}/bin/tuigreet --time --remember --cmd niri-session";
       user = "greeter";
     };
   };
@@ -68,7 +68,7 @@
   # X11 app support: niri (25.08+) natively spawns xwayland-satellite and
   # exports $DISPLAY on demand — it just needs the binary on PATH.
   environment.systemPackages = [
-    niri-flake.packages.${pkgs.system}.xwayland-satellite-unstable
+    niri-flake.packages.${pkgs.stdenv.hostPlatform.system}.xwayland-satellite-unstable
   ];
 
   # --- Wayland-friendly env ---
