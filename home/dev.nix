@@ -1,4 +1,4 @@
-{ config, pkgs, lib, ... }:
+{ pkgs, ... }:
 # General development toolchains + CLIs — everything you'd want at a shell
 # regardless of editor. Editor-only plumbing (LSP servers, DAP adapters,
 # tree-sitter) lives in ./nvim-tools.nix. These sit on plain stable `pkgs`
@@ -40,6 +40,9 @@
     rsync
     unzip
     jq                 # JSON wrangling
+    openssl            # crypto CLI (zitadel-setup.sh JWT signing)
+    postgresql         # psql client for the per-project docker postgres
+    psmisc             # fuser (port cleanup in make dev / worktree-teardown)
     gh                 # GitHub CLI
     tldr               # concise command examples
     fastfetch          # system info
